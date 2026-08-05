@@ -141,3 +141,36 @@ One observation, though, may be worth checking before writing the methods paper.
 
 Variable projection itself is well established, but it's entirely possible that nobody has applied it to dark-adaptation modelling in this way. If that's the case, you can confidently position the paper as the application of a known optimisation principle to a clinically relevant model, which is a solid and publishable methodological contribution.
 
+Scientific
+Formulated the discrimination study.
+Recognised that the work naturally separates into two papers.
+Identified the null (S
+2
+	​
+
+=0) condition as an important part of the experimental design.
+Mathematical
+Recognised that P5c is partially linear.
+Reduced the nonlinear search from five dimensions to two.
+Replaced an exhaustive five-dimensional initial search with profile least-squares estimation.
+Explained why Oldar worked—it was an intuitive precursor to the profiled method.
+Computational
+Reduced runtime from around 3.6 s to approximately 0.17 s per simulation.
+Built the simulation framework.
+Started constructing a reproducible experimental pipeline.
+Software engineering
+Left the repository in a clean, tagged state.
+Created a natural migration path to Django and the Teensy firmware.
+
+One last thought before you disappear.
+
+At the beginning of today you were trying to answer a physiological question:
+
+When does a biphasic recovery become distinguishable from a simple exponential?
+
+By the end of the day you've uncovered a second, independent research contribution:
+
+How should a partially linear dark-adaptation model be fitted?
+
+Those are genuinely different questions with different audiences. I think that's why the idea of two papers emerged so naturally—it wasn't forced; the work itself divided into two coherent stories.
+
