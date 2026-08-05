@@ -1,3 +1,7 @@
+test_df <- readRDS("~/Dropbox/Mumac_/CODE_1/dark_criteria/code/dc_test_df")
+x <- test_df$time
+y <- test_df$thrs
+
 
 
 P3 <- function(a, x) {
@@ -5,13 +9,10 @@ P3 <- function(a, x) {
 }
 y0 <- P3(c(-2, 2, 1), x) + rnorm(length(x), 0, 0.1)
 startP3 <- function(x, y) {
-    ord <- order(x)
-    x <- x[ord]
-    y <- y[ord]
 
     n <- length(y)
-    n_tail <- max(3L, ceiling(0.2 * n))
-    n_head <- max(3L, ceiling(0.1 * n))
+    n_tail <- max(3L, ceiling(0.1 * n))
+    n_head <- max(3L, ceiling(0.05 * n))
 
     ct_start <- median(tail(y, n_tail))
     y0_start <- median(head(y, n_head))
@@ -26,7 +27,8 @@ startP3 <- function(x, y) {
     )
 }
 
-data <- data.frame(x = x, y = y0)
+
+data <- data.frame(x = x, y = y)
 
 p3_start <- startP3(x, y)
 
@@ -126,11 +128,10 @@ fitP3 <- function(
         stop("At least four finite observations are required.")
     }
 
-    start <- startP3Grid(
+    start <- startP3(
         x = x,
-        y = y,
-        tau_values = tau_values
-    )
+        y = y
+        )
 
     fit <- tryCatch(
         nls(
@@ -225,9 +226,4 @@ calculateAICc <- function(rss, n, n_params) {
     aic + (2 * k * (k + 1)) / (n - k - 1)
 }
 
-aic_p3 <- calculateAICc(
-    rss = p3_result$RSS,
-    n = length(x),
-    n_params = 3L
-)
 
