@@ -245,10 +245,3 @@ findInitialParametersProfiled <- function(
 }
 
 
-p0 <- findInitialParametersProfiled(
-    time = x,
-    threshold = y
-)
-
-p0$best
-p0$RSS

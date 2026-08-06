@@ -1,22 +1,44 @@
+rm(list = ls())
 # Find P5 using Rapida methodology
 source("~/Dropbox/Mumac_/CODE_1/dark_criteria/code/dc_gradient_Descent_Functions.R")
 source("~/Dropbox/Mumac_/CODE_1/dark_criteria/code/dc_Huber_loss.R")
 source("~/Dropbox/Mumac_/CODE_1/dark_criteria/code/dc_Oldar.R")
 source("~/Dropbox/Mumac_/CODE_1/dark_criteria/code/dc_P3_find.R")
 source("~/Dropbox/Mumac_/CODE_1/dark_criteria/code/dc_findInitialParameters.R")
+source('~/Dropbox/Mumac_/CODE_1/dark_criteria/code/dc_findInitialParametersProfiled.R')
 source('~/Dropbox/Mumac_/CODE_1/dark_criteria/code/dc_P5cPredictionIntervals.R')
 source('~/Dropbox/Mumac_/CODE_1/dark_criteria/code/dc_Jacobian.R')
+source('~/Dropbox/Mumac_/CODE_1/dark_criteria/code/dc_simulateData.R')
+source('~/Dropbox/Mumac_/CODE_1/dark_criteria/code/dc_experiment_grid.R')
 # starttime <- system.time({
 # test data
-# test_df <- readRDS("~/Dropbox/Mumac_/CODE_1/dark_criteria/code/dc_test_df")
-# x <- test_df$time
+test_df <- readRDS("~/Dropbox/Mumac_/CODE_1/dark_criteria/code/dc_test_df")
+x <- test_df$time
 # y <- test_df$thrs
 
 # set.seed(1234)
 plot<- TRUE
 
+job <- experiment_grid[6000L, ]
+
+sim <- generateSimulationFromRow(
+    job = job,
+    time = x,
+    ct = ct_fixed,
+    cc = cc_fixed,
+    tau = tau_fixed,
+    analysis_version = "cd993fd"
+)
+
+sim$metadata
+head(sim$data)
+
 x <- sim$data$time
 y <- sim$data$threshold_observed
+
+# idx <- x < 6
+# x <- x[idx]
+# y <- y[idx]
 
 # Start parameters
 # derived
@@ -53,15 +75,15 @@ ci0 <- P5cConfidenceIntervals(
 
 
 
-p5_rss <- sum((y - P5c(op0hO$param, x))^2)
-p3_rss <- sum((y - P3(p3_result$params, x))^2)
 
 # Compare to P3
-p3_result <- fitP3(x, y0)
-p3_result$RSS_con
+p3_result <- fitP3(x, y)
+p3_result$rss
 p3_result$params
-p3_result$converged
 
+
+p5_rss <- sum((y - P5c(op0hO$param, x))^2)
+p3_rss <- sum((y - P3(p3_result$params, x))^2)
 
 aic_p3 <- calculateAICc(rss = p3_rss, n = length(x), n_params = 3L)
 aic_p5 <- calculateAICc(rss = p5_rss, n = length(x), n_params = 5L)

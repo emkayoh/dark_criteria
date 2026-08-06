@@ -1,6 +1,7 @@
 ct_fixed <- -1.7
 cc_fixed <- 1.90
-tau_fixed <- 0.60source('~/dc_experiment_grid.R', chdir = TRUE)
+tau_fixed <- 0.60
+
 
 
 S2_values <- c(
@@ -86,19 +87,7 @@ generateSimulationFromRow <- function(
     )
 }
 
-job <- experiment_grid[3000L, ]
 
-sim <- generateSimulationFromRow(
-    job = job,
-    time = time_values,
-    ct = ct_fixed,
-    cc = cc_fixed,
-    tau = tau_fixed,
-    analysis_version = "4f92d8c"
-)
-
-sim$metadata
-head(sim$data)
 
 
 
