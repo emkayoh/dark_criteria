@@ -1,13 +1,4 @@
-test_df <- readRDS("~/Dropbox/Mumac_/CODE_1/dark_criteria/code/dc_test_df")
-x <- test_df$time
-y <- test_df$thrs
 
-
-
-P3 <- function(a, x) {
-    a[1] + a[2] * exp(-x / a[3])
-}
-y0 <- P3(c(-2, 2, 1), x) + rnorm(length(x), 0, 0.1)
 startP3 <- function(x, y) {
 
     n <- length(y)
@@ -94,50 +85,51 @@ startP3Grid <- function(
     unname_structure
 }
 
-
-#' Fit the three-parameter exponential model
+#' Fit the three-parameter exponential dark-adaptation model
 #'
-#' Fits:
+#' Fits
 #'
 #'   y = ct + cc * exp(-x / tau)
 #'
-#' using grid-derived starting values followed by bounded nonlinear
-#' least-squares optimisation.
+#' using bounded nonlinear least squares. Residuals and RSS are recalculated
+#' explicitly from the fitted coefficients rather than relying solely on the
+#' residuals method for the nls object.
 #'
-#' @param x Numeric vector of measurement times.
-#' @param y Numeric vector of observed sensitivities.
-#' @param tau_values Positive candidate tau values used to derive starting
-#'   values.
+#' @param x Numeric vector of observation times.
+#' @param y Numeric vector of observed thresholds.
 #'
-#' @return A list containing the fitted parameters, residual diagnostics,
-#'   convergence information and the underlying nls object.
-fitP3 <- function(
-    x,
-    y,
-    tau_values = 10^seq(
-        log10(0.01),
-        log10(max(2, max(x, na.rm = TRUE))),
-        length.out = 50L
-    )
-) {
+#' @return A list containing fitted parameters, predictions, residuals,
+#'   residual statistics and convergence information.
+fitP3 <- function(x, y) {
     valid <- is.finite(x) & is.finite(y)
-    x <- x[valid]
-    y <- y[valid]
+    x_fit <- x[valid]
+    y_fit <- y[valid]
 
-    if (length(x) < 4L) {
+    if (length(x_fit) < 4L) {
         stop("At least four finite observations are required.")
     }
 
     start <- startP3(
-        x = x,
-        y = y
+        x = x_fit,
+        y = y_fit
+    )
+
+    required_names <- c("ct", "cc", "tau")
+
+    if (
+        !is.numeric(start) ||
+        !all(required_names %in% names(start)) ||
+        any(!is.finite(start[required_names]))
+    ) {
+        stop(
+            "startP3() must return finite named values for ct, cc and tau."
         )
+    }
 
     fit <- tryCatch(
         nls(
-            y ~ ct + cc * exp(-x / tau),
-            data = data.frame(x = x, y = y),
-            start = as.list(start),
+            y_fit ~ ct + cc * exp(-x_fit / tau),
+            start = as.list(start[required_names]),
             algorithm = "port",
             lower = c(
                 ct = -Inf,
@@ -145,7 +137,9 @@ fitP3 <- function(
                 tau = 0.001
             ),
             control = nls.control(
-                maxiter = 500,
+                maxiter = 500L,
+                tol = 1e-8,
+                minFactor = 1 / 4096,
                 warnOnly = TRUE
             )
         ),
@@ -161,24 +155,54 @@ fitP3 <- function(
         ))
     }
 
-    residuals <- residuals(fit)
-    rss <- sum(residuals^2)
-    n <- length(y)
-    p <- 3L
+    params <- coef(fit)[required_names]
+
+    # Recalculate predictions directly from the fitted parameters.
+    fitted_values <- (
+        params["ct"] +
+        params["cc"] * exp(-x_fit / params["tau"])
+    )
+
+    residual_values <- y_fit - fitted_values
+
+    rss <- sum(residual_values * residual_values)
+    n <- length(y_fit)
+    p <- length(params)
+    residual_df <- n - p
+
+    # Independent checks against the nls object.
+    nls_residuals <- stats::residuals(fit)
+    nls_rss <- sum(nls_residuals * nls_residuals)
+    nls_deviance <- stats::deviance(fit)
+
+    rss_consistent <- (
+        isTRUE(all.equal(rss, nls_rss, tolerance = 1e-10)) &&
+        isTRUE(all.equal(rss, nls_deviance, tolerance = 1e-10))
+    )
 
     convergence <- fit$convInfo
 
     list(
         model = "P3",
-        params = coef(fit)[c("ct", "cc", "tau")],
+        params = params,
         start = start,
-        fitted = fitted(fit),
-        residuals = residuals,
+        fitted = fitted_values,
+        residuals = residual_values,
         RSS = rss,
-        MSE = rss / (n - p),
-        noise = sd(residuals),
+        MSE = if (residual_df > 0L) {
+            rss / residual_df
+        } else {
+            NA_real_
+        },
+        noise = stats::sd(residual_values),
+        residual_df = residual_df,
         converged = isTRUE(convergence$isConv),
         convergence = convergence,
+        RSS_nls = nls_rss,
+        deviance_nls = nls_deviance,
+        RSS_consistent = rss_consistent,
+        x = x_fit,
+        y = y_fit,
         fit = fit
     )
 }
