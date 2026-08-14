@@ -1,0 +1,76 @@
+---
+title: "Explaining Variable Projection"
+author: "Dr. Jeremiah MF Kelly"
+date: "`r Sys.Date()`"
+output:
+  html_document: default
+  pdf_document: default
+subtitle: The evolution of Oldar
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# The model
+
+We model the recovery of visual sensitivity during dark adaptation with the function
+
+$$
+\text{thres}(t) = ct + cc\,e^{-t/\tau} + S2\,(t-\alpha)\,H(t-\alpha),
+$$
+
+where:
+
+- $\text{thres}(t)$ is the measured threshold at time $t$ after bleach;
+- $ct$ is the cone threshold, the plateau to which cone-mediated sensitivity recovers;
+- $cc$ is the cone coefficient, the amplitude of the cone recovery component;
+- $\tau$ is the cone time constant;
+- $S2$ is the slope of the second (rod-mediated) component of recovery;
+- $\alpha$ is the rod-cone break, the time at which rod recovery begins;
+- $H(t-\alpha)$ is the Heaviside step function, equal to $0$ for $t < \alpha$ and $1$ for $t \geq \alpha$.
+
+The term $(t-\alpha)H(t-\alpha)$ is therefore a ramp: it is zero before the rod-cone break and rises linearly with slope $S2$ after it.
+
+## Rewriting the model in a familiar form
+
+Most STEM scientists are familiar with the equation of a straight line,
+
+$$
+y = c + mx,
+$$
+
+where $y$ is the response, $x$ is the independent variable, $c$ is the intercept and $m$ is the gradient. Fitting this line to data by ordinary least squares (OLS) has a closed-form solution: no iteration, no starting guesses.
+
+Our aim is to show that, under one condition, our model has exactly the same character. We want to reach the form
+
+$$
+\mathbf{Y} = a + \mathbf{B}\,\mathbf{F}(\mathbf{x}),
+$$
+
+where $\mathbf{Y}$ is the vector of participant responses, $\mathbf{x}$ is the vector of response time stamps, $a$ is an intercept, $\mathbf{F}$ is a set of basis functions evaluated at those time stamps, and $\mathbf{B}$ is a vector of coefficients. This is the straight-line equation with the single term $mx$ replaced by a sum of curved terms.
+
+Suppose the two nonlinear parameters, $\tau$ and $\alpha$, are held fixed. Then define two basis functions:
+
+$$
+f_1(\mathbf{x}) = e^{-\mathbf{x}/\tau}, \qquad
+f_2(\mathbf{x}) = (\mathbf{x}-\alpha)\,H(\mathbf{x}-\alpha).
+$$
+
+The model becomes
+
+$$
+\mathbf{Y} = ct + cc\,f_1(\mathbf{x}) + S2\,f_2(\mathbf{x}) = a + \mathbf{B}\,\mathbf{F}(\mathbf{x}),
+$$
+
+with $a = ct$ playing the role of the intercept $c$, and $\mathbf{B} = (cc,\ S2)$. This is a linear model. Every quantity we do not know appears only as an intercept or a multiplying coefficient. Those familiar with OLS will recognise that the best-fitting $a$ and $\mathbf{B}$ can be computed together in closed form, exactly as for the straight line.
+
+## The point of variable projection
+
+The full model is non-linear only through $\tau$ and $\alpha$. Variable projection (VarPro) exploits this structure:
+
+1. For any candidate pair $(\tau, \alpha)$, the intercept and coefficients $(ct, cc, S2)$ are obtained analytically by least squares. They are never searched for.
+2. The optimisation therefore reduces from a five-parameter nonlinear search to a two-parameter search over $(\tau, \alpha)$ alone.
+
+This separation brings practical benefits. The search space collapses from five dimensions to two, so the fit is faster and far less prone to local minima. No starting guesses are required for the linear parameters, which removes a common source of fitting failure in clinical data. The two-dimensional $(\tau, \alpha)$ space is small enough to search exhaustively over a grid if required, giving a deterministic and reproducible fit.
+

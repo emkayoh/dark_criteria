@@ -1,0 +1,8 @@
+2026-08-03 15:29:40 +0100  420e41a  first commit
+2026-08-03 20:35:36 +0100  bcb8617  Initial commit
+2026-08-05 21:49:25 +0100  7b19a8d  Initial commit
+2026-08-06 00:12:35 +0100  dd5ea31  Introduce profile least-squares initialisation for P5c optimisation
+2026-08-06 00:15:25 +0100  cd993fd  final comment 2026-08-06
+2026-08-06 11:20:39 +0100  4ca5e79  Add discrimination and inference framework
+2026-08-06 12:31:21 +0100  f755c3e  simplified function to fit exponentail decay via profiled least squares
+2026-08-06 12:32:04 +0100  ba96f60  minor alterations to code base in preparation for the discrimantion study

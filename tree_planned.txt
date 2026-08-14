@@ -1,0 +1,13 @@
+R
+│
+├── experiment definition
+├── simulation parameters
+├── results / plots / analysis
+│
+└── C++ executable
+      ├── data simulation
+      ├── P3 / P5c functions
+      ├── loss calculation
+      ├── parameter search
+      ├── optimisation
+      └── parallel replicates

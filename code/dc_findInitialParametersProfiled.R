@@ -20,7 +20,7 @@
 findInitialParametersProfiled <- function(
     time,
     threshold,
-    tau_range = seq(0.01, max(time), length.out = 40L),
+    tau_range = seq(0.01, max(log(time)), length.out = 40L),
     alpha_range = seq(0.5, max(time), length.out = 80L),
     refine = TRUE,
     tau_bounds = range(tau_range),

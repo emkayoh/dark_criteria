@@ -1,0 +1,29 @@
+% fig2-varpro-loop.tex  (JMFK)
+% Variable projection search loop: only (tau, alpha) is searched;
+% ct, cc, S2 are solved in closed form at every candidate.
+% Requires: tikz with libraries positioning, arrows.meta.
+\begin{tikzpicture}[
+  node distance=8mm,
+  box/.style={rectangle, rounded corners=2mm, draw, line width=0.6pt,
+              text width=58mm, align=center, inner sep=2.5mm},
+  searched/.style={box, draw=rodC, fill=rodC!10},
+  solved/.style={box, draw=tealC, fill=tealC!10},
+  neutral/.style={box, draw=grayC, fill=grayC!10},
+  arr/.style={-{Stealth[length=2.4mm]}, line width=0.8pt, grayC},
+]
+\node[searched] (pick)
+  {Pick a candidate $(\tau,\alpha)$\\ \footnotesize only two parameters are searched};
+\node[solved, below=of pick] (solve)
+  {Solve $ct$, $cc$ and $S2$\\ \footnotesize closed-form least squares, no searching};
+\node[neutral, below=of solve] (score)
+  {Score the fit\\ \footnotesize residual sum of squares};
+\node[solved, below=of score] (keep)
+  {Keep the best $(\tau,\alpha)$\\ \footnotesize lowest residual wins};
+\draw[arr] (pick) -- (solve);
+\draw[arr] (solve) -- (score);
+\draw[arr] (score) -- (keep);
+% return path of the outer loop
+\draw[arr, dashed] (score.east) -- ++(14mm,0) |- (pick.east)
+  node[pos=0.25, right, font=\footnotesize, align=left, xshift=1mm]
+  {repeat for\\ every grid point};
+\end{tikzpicture}

@@ -1,0 +1,41 @@
+Search Terms
+2026-08-06
+
+"profile least squares" nonlinear regression
+"separable nonlinear least squares"
+"variable projection" nonlinear least squares
+Golub Pereyra variable projection
+Kaufman variable projection nonlinear least squares
+O'Leary Rust variable projection
+partially linear nonlinear regression
+conditional linearity nonlinear regression
+nonlinear regression parameters separate
+profiled nonlinear least squares
+
+
+For the particular structure of P5c:
+variable projection exponential change point model
+separable nonlinear least squares exponential model
+piecewise nonlinear regression Heaviside function
+segmented nonlinear regression change point
+continuous hinge model nonlinear regression
+broken-stick nonlinear regression unknown breakpoint
+nonlinear regression unknown transition time
+
+For uncertainty and identifiability:
+Jacobian conditioning nonlinear least squares
+parameter identifiability nonlinear regression Jacobian
+Gauss-Newton covariance nonlinear least squares
+profile likelihood confidence intervals nonlinear regression
+bootstrap confidence intervals nonlinear regression
+change point parameter confidence interval nonlinear regression
+non-identifiable breakpoint zero slope
+
+And for the discrimination paper:
+model discrimination nested nonlinear models AICc
+detecting biphasic exponential recovery
+biphasic versus monophasic nonlinear model selection
+simulation study nonlinear model classification
+empirical coverage nonlinear regression confidence intervals
+change point detection under measurement noise
+

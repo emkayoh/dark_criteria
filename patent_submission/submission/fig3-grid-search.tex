@@ -1,0 +1,40 @@
+% fig3-grid-search.tex  (JMFK)
+% Exhaustive grid search over the (tau, alpha) plane. Cell shade = fit error
+% (darker = better); the star marks the lowest residual. Every cell costs one
+% closed-form solve, so the search is deterministic and reproducible.
+% Requires: tikz with library arrows.meta. Shading is synthetic/illustrative.
+\begin{tikzpicture}[x=8.5mm, y=8.5mm]
+% ---- grid parameters: edit these, everything else follows ----
+\def\gN{8}          % grid is gN x gN cells
+\def\gBestTau{5}    % column of the best cell (0-based)
+\def\gBestAlpha{3}  % row of the best cell (0-based)
+\def\gShadeMax{92}  % shade percentage at the minimum (darkest)
+\def\gShadeSlope{6.0} % how fast shade fades with error distance
+\def\gShadeMin{6}   % shade floor at the grid edges (lightest)
+% ---- derived quantities (do not edit) ----
+\pgfmathtruncatemacro{\gLast}{\gN - 1}
+\pgfmathsetmacro{\gAxisEnd}{\gN - 0.6}
+\foreach \i in {0,...,\gLast}{
+  \foreach \j in {0,...,\gLast}{
+    \pgfmathsetmacro{\err}{(\i-\gBestTau)*(\i-\gBestTau)
+                         + (\j-\gBestAlpha)*(\j-\gBestAlpha)}
+    \pgfmathsetmacro{\pct}{max(\gShadeMin, \gShadeMax - \gShadeSlope*\err)}
+    \fill[rodC!\pct] (\i, \j) rectangle ++(0.92, 0.92);
+  }
+}
+% best cell
+\node[white, font=\Large\bfseries]
+  at ({\gBestTau+0.46}, {\gBestAlpha+0.46}) {$\star$};
+% axes
+\draw[-{Stealth[length=2.4mm]}, grayC, line width=0.7pt]
+  (0,-0.55) -- (\gAxisEnd,-0.55) node[right, font=\small, black] {$\tau$};
+\draw[-{Stealth[length=2.4mm]}, grayC, line width=0.7pt]
+  (-0.55,0) -- (-0.55,\gAxisEnd) node[above, font=\small, black] {$\alpha$};
+% legend
+\node[anchor=west, font=\footnotesize, align=left]
+  at ({\gN+0.6}, {0.68*\gN})
+  {each cell: one candidate $(\tau,\alpha)$,\\ one closed-form solve, one residual};
+\node[anchor=west, font=\footnotesize, align=left]
+  at ({\gN+0.6}, {0.49*\gN})
+  {darker $=$ lower error;\\ $\star$ marks the accepted fit};
+\end{tikzpicture}

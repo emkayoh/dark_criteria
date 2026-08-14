@@ -1,0 +1,60 @@
+% fig1-model-curve.tex  (JMFK)
+% Dark adaptation model: cone branch, cone threshold ct, rod branch from alpha.
+% Requires: tikz, pgfplots (\pgfplotsset{compat=1.18}), arrows.meta.
+\begin{tikzpicture}
+% ---- model parameters: edit these, everything else follows ----
+\def\pCT{1.0}      % cone threshold
+\def\pCC{1.0}      % cone coefficient
+\def\pTAU{2.5}     % cone time constant (min)
+\def\pALPHA{10}    % rod-cone break (min)
+\def\pSTWO{-0.06}  % rod slope (negative = threshold falls)
+\def\pTMAX{25}     % end of plotted time range (min)
+% ---- callout layout: x positions of the two arrow targets ----
+\def\xConePt{2.6}
+\def\xRodPt{16}
+% ---- derived quantities (do not edit) ----
+\pgfmathsetmacro{\yBreak}{\pCT + \pCC*exp(-\pALPHA/\pTAU)}
+\pgfmathsetmacro{\yConePt}{\pCT + \pCC*exp(-\xConePt/\pTAU)}
+\pgfmathsetmacro{\yRodPt}{\pCT + \pCC*exp(-\xRodPt/\pTAU) + \pSTWO*(\xRodPt-\pALPHA)}
+\pgfmathsetmacro{\yMax}{(\pCT + \pCC)*1.13}
+\pgfmathsetmacro{\xMax}{\pTMAX + 1}
+\begin{axis}[
+  width=124mm, height=78mm,
+  axis lines=left,
+  xlabel={Time in the dark, $t$ (min)},
+  ylabel={Threshold (higher $=$ less sensitive)},
+  xmin=0, xmax=\xMax, ymin=0, ymax=\yMax,
+  ytick=\empty,
+  xtick={\pALPHA}, xticklabels={$\alpha$},
+  clip=false,
+  every axis plot/.append style={line width=1.1pt},
+]
+% cone-dominated portion (full model, rod term zero before alpha)
+\addplot[coneC, domain=0:\pALPHA, samples=120]
+  {\pCT + \pCC*exp(-x/\pTAU)};
+% rod-dominated portion (full model including the ramp)
+\addplot[rodC, domain=\pALPHA:\pTMAX, samples=120]
+  {\pCT + \pCC*exp(-x/\pTAU) + \pSTWO*(x-\pALPHA)};
+% rod-cone break marker
+\fill (axis cs:\pALPHA,\yBreak) circle[radius=1.6pt];
+% ct plateau guide
+\draw[dashed, grayC] (axis cs:0,\pCT) -- (axis cs:\xMax,\pCT)
+  node[anchor=west, font=\small] {$ct$ (cone threshold)};
+% alpha guide
+\draw[dashed, grayC] (axis cs:\pALPHA,0) -- (axis cs:\pALPHA,\yBreak);
+\node[anchor=west, font=\footnotesize]
+  at (axis cs:{\pALPHA+0.4},{\yBreak+0.31}) {rod--cone break};
+% cone branch callout
+\node[anchor=west, font=\small, align=left] (conelbl)
+  at (axis cs:{0.55*\pALPHA},{0.85*\yMax})
+  {cone branch: $cc\,e^{-t/\tau}$\\ \footnotesize speed set by $\tau$};
+\draw[grayC, shorten >=1.5pt, -{Stealth[length=2mm]}]
+  (conelbl.west) -- (axis cs:\xConePt,\yConePt);
+% rod branch callout
+\node[anchor=west, font=\small, align=left] (rodlbl)
+  at (axis cs:{\pALPHA+7.5},{0.61*\yMax})
+  {rod branch: slope $S2$\\ \footnotesize begins at $t=\alpha$};
+\draw[grayC, shorten >=1.5pt, -{Stealth[length=2mm]}]
+  (rodlbl.south west) -- (axis cs:\xRodPt,\yRodPt);
+\end{axis}
+\end{tikzpicture}
