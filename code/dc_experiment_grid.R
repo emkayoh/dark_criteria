@@ -1,23 +1,3 @@
-ct_fixed <- -1.7
-cc_fixed <- 1.90
-tau_fixed <- 0.60
-
-
-
-S2_values <- c(
-    -0.05, -0.10, -0.15,
-    -0.20, -0.25, -0.30
-)
-
-alpha_values <- c(3, 5, 7, 9)
-
-noise_values <- c(
-    0, 0.05, 0.10,
-    0.15, 0.20, 0.30
-)
-
-n_replicates <- 250L
-
 experiment_grid <- expand.grid(
     S2_real = S2_values,
     alpha_real = alpha_values,
