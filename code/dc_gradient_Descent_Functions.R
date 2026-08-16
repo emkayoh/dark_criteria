@@ -1,5 +1,5 @@
 # Reference copy 15 Aug 2026
-# For a numerical experiment 
+# For a numerical experiment
 # Dr Jeremiah MF Kelly
 
 H <- function(x, t) {
@@ -131,104 +131,145 @@ progGrad <- function(p0, fn = P5c, x, y) {
 
 
 
-findParametersGDPlain <- function(a, fn, x, y, inv = FALSE) {
-	val = list()
-	tol <- 1e-06
-	delta <- NULL
-	eta <- 1/c(1000, 1000, 1000, 10000, 100)
-	LS0 <- 1e+07
-	for (ii in 1:20000) {
-		gradient <- Grad(a, fn, x, y)
-		a <- a - eta * gradient
-		LS1 <- LeastSq(a, fn, x, y, inv)
-		del = LS0 - LS1
-		LS0 = LS1
-		delta <- c(delta, del)
-		if (abs(del) < tol)
-			break
-	}
-	resV <- Resid(a, fn, x, y)
-	val$params = a
-	val$runs = ii
-	val$noise = sd(resV)
-	val$MSE = resV %*% resV/(length(x) - 5)
-	return(val)
+findParametersGDPlain <- function(
+    a,
+    fn,
+    x,
+    y,
+    inv = FALSE,
+    tol = 1e-6,
+    max_iter = 20000L,
+    max_backtrack = 30L
+) {
+
+    eta <- 1 / c(
+        1000,
+        1000,
+        1000,
+        10000,
+        100
+    )
+
+    # Current objective
+    LS0 <- LeastSq(
+        a,
+        fn,
+        x,
+        y,
+        inv
+    )
+
+    if (!is.finite(LS0)) {
+        stop("Initial least-squares value is non-finite")
+    }
+
+    converged <- FALSE
+    status <- "max_iterations"
+
+    for (ii in seq_len(max_iter)) {
+
+        gradient <- Grad(
+            a,
+            fn,
+            x,
+            y
+        )
+
+        if (any(!is.finite(gradient))) {
+            status <- "non_finite_gradient"
+            break
+        }
+
+        # ----------------------------------------------
+        # Backtracking step
+        # ----------------------------------------------
+
+        step_scale <- 1
+        accepted <- FALSE
+
+        for (jj in seq_len(max_backtrack)) {
+
+            a_new <- a -
+                step_scale * eta * gradient
+
+            # tau must remain positive
+            valid_params <-
+                all(is.finite(a_new)) &&
+                a_new[3] > 0
+
+            if (valid_params) {
+
+                LS1 <- LeastSq(
+                    a_new,
+                    fn,
+                    x,
+                    y,
+                    inv
+                )
+
+            } else {
+
+                LS1 <- Inf
+            }
+
+            # Accept only a finite, improving step
+            if (
+                is.finite(LS1) &&
+                LS1 <= LS0
+            ) {
+                accepted <- TRUE
+                break
+            }
+
+            step_scale <- step_scale / 2
+        }
+
+        # No acceptable step found:
+        # retain the last valid parameter vector
+        if (!accepted) {
+            status <- "no_improving_step"
+            break
+        }
+
+        # ----------------------------------------------
+        # Accept step
+        # ----------------------------------------------
+
+        del <- LS0 - LS1
+
+        a <- a_new
+        LS0 <- LS1
+
+        if (abs(del) < tol) {
+            converged <- TRUE
+            status <- "converged"
+            break
+        }
+    }
+
+    # ----------------------------------------------
+    # Final residual diagnostics
+    # ----------------------------------------------
+
+    resV <- Resid(
+        a,
+        fn,
+        x,
+        y
+    )
+
+    list(
+        params = a,
+        runs = ii,
+        noise = sd(resV),
+        MSE = as.numeric(
+            resV %*% resV /
+                (length(x) - 5)
+        ),
+        converged = converged,
+        status = status
+    )
 }
-
-
-  # val = list()
-  # tol <- 1e-06
-  # eta <- 1/c(1000, 1000, 1000, 10000, 100)
-  # LS0 <- 1e+07
-  # velocity = 0
-  # gamma = 0.9
-  # for (ii in 1:10000) {
-    # gradient <- Grad(a, fn, x, y)
-    # velocity = gamma * velocity + eta * gradient
-    # a <- a - velocity
-    # LS1 <- LeastSq(a, fn, x, y, inv)
-    # del = LS0 - LS1
-    # LS0 = LS1
-    # if (abs(del) < tol)
-      # break
-  # }
-  # resV <- Resid(a, fn, x, y)
-  # val$params = a
-  # val$runs = ii
-  # val$noise = sd(resV)
-  # val$MSE = resV %*% resV/(length(x) - 5)
-  # return(val)
-
-
-  # val = list()
-  # tol <- 1e-06
-  # eta <- 1/c(1000, 1000, 1000, 10000, 100)
-  # LS0 <- 1e+07
-  # velocity = 0
-  # gamma = 0.9
-  # for (ii in 1:10000) {
-    # gradient <- Grad(a, fn, x, y)
-    # velocity = gamma * velocity + eta * gradient
-    # a <- a - velocity
-    # if (a[5] < 0 | a[5] > max(x)) {
-      # a[5] <- 0
-      # a[4] <- 0
-    # }
-    # LS1 <- LeastSq(a, fn, x, y, inv)
-    # del = LS0 - LS1
-    # LS0 = LS1
-    # if (abs(del) < tol)
-      # break
-  # }
-  # resV <- Resid(a, fn, x, y)
-  # val$params = a
-  # val$runs = ii
-  # val$noise = sd(resV)
-  # val$MSE = resV %*% resV/(length(x) - 5)
-  # return(val)
-
-  # val = list()
-  # tol <- 1e-06
-  # eta <- 1/c(1000, 1000, 1000, 10000, 10)
-  # LS0 <- 1e+07
-  # velocity = 0
-  # gamma = 0.6
-  # for (ii in 1:10000) {
-    # gradient <- Grad(a - gamma * velocity, fn, x, y)
-    # velocity = gamma * velocity + eta * gradient
-    # a <- a - velocity
-    # LS1 <- LeastSq(a, fn, x, y, inv)
-    # del = LS0 - LS1
-    # LS0 = LS1
-    # if (abs(del) < tol)
-      # break
-  # }
-  # resV <- Resid(a, fn, x, y)
-  # val$params = a
-  # val$runs = ii
-  # val$noise = sd(resV)
-  # val$MSE = resV %*% resV/(length(x) - 5)
-  # return(val)
 
 
 P5cJacobian <- function(a, x) {
@@ -276,39 +317,6 @@ P5cRSSHessian <- function(a, x) {
 
 
 
-  # eigenvalues <- round(eigen(hess)$values, 5)
-  # is_positive_definite <- all(eigenvalues > 0)
-  # is_positive_semi_definite <- all(eigenvalues >= 0)
-  # is_indefinite <- any(eigenvalues < 0)
-
-  # if (is_positive_definite) {
-    # cat("The Hessian matrix is positive definite.\n")
-    # return(1)
-  # } else if (is_positive_semi_definite) {
-    # cat("The Hessian matrix is positive semi-definite.\n")
-    # return(0)
-  # } else if (is_indefinite) {
-    # cat("The Hessian matrix is indefinite.\n")
-    # return(-1)
-  # }
-
-
-  # para <- NULL
-  # noise <- NULL
-  # nobs <- length(x)  # Assuming `time` should be `x`
-  # for(ii in 1:nobs) {
-    # fit <- findParametersGDPlain(a, fn, x[-ii], y[-ii], inv)
-    # para <- rbind(para, fit$params)
-    # noise <- c(noise, fit$noise)
-  # }
-
-  # idx <- which.min(noise)
-  # fit <- findParametersGDPlain(a, fn, x[-idx], y[-idx], inv = TRUE)
-  # hess <- Hessian(para[idx,], fn, x[-idx], y[-idx])
-  # fit$hessian <- hess
-  # fit$least_informative_point <- idx
-
-  # fit
 
 
 

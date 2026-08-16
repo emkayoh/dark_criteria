@@ -32,16 +32,49 @@
 #' fit$params
 #'
 #' @export
+
+
 fitP3 <- function(x, y) {
-  f <- function(tau) sum(qr.resid(qr(cbind(1, exp(-x/tau))), y)^2)
-  g <- exp(seq(log(diff(range(x))/1000), log(diff(range(x))*10), length.out = 400))
-  i <- which.min(vapply(g, f, 0))
-  tau <- optimize(f, c(g[max(1,i-1)], g[min(400,i+1)]))$minimum
-  cf <- qr.solve(cbind(1, exp(-x/tau)), y)
-  list(params = c(cf[1], cf[2], tau), rss = f(tau))
+
+    f <- function(tau) {
+        X <- cbind(1, exp(-x / tau))
+        sum(qr.resid(qr(X), y)^2)
+    }
+
+    g <- exp(
+        seq(
+            log(diff(range(x)) / 1000),
+            log(diff(range(x)) * 10),
+            length.out = 400
+        )
+    )
+
+    fv <- vapply(g, f, numeric(1))
+    i <- which.min(fv)
+
+    interval <- c(
+        g[max(1, i - 1)],
+        g[min(length(g), i + 1)]
+    )
+
+    opt <- optimize(
+        f,
+        interval = interval,
+        tol = 1e-12
+    )
+
+    tau <- opt$minimum
+
+    X <- cbind(1, exp(-x / tau))
+    cf <- qr.solve(X, y)
+
+    residuals <- y - drop(X %*% cf)
+
+    list(
+        params = c(cf[1], cf[2], tau),
+        rss = sum(residuals^2)
+    )
 }
-
-
 
 calculateAIC <- function(rss, n, n_params) {
     if (!is.finite(rss) || rss <= 0) {

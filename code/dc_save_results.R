@@ -1,8 +1,12 @@
 append_result_row <- function(result_row, file) {
 
-    stopifnot(nrow(result_row) == 1L)
+    stopifnot(
+        nrow(result_row) == 1L
+    )
 
-    new_file <- !file.exists(file) || file.info(file)$size == 0
+    new_file <-
+        !file.exists(file) ||
+        file.info(file)$size == 0
 
     write.table(
         result_row,
