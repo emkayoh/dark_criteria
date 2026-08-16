@@ -7,3 +7,10 @@ code/dc_test_df
 Untitled.R
 .Rhistory
 .DS_Store
+*.bak
+results/
+code/backups/
+code/sandpit/
+*.aux
+*.log
+*.synctex.gz

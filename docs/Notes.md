@@ -6,9 +6,7 @@ The P5c model is **partially linear**. Rather than treating parameter estimation
 
 The model is
 
-\[
-y = c_t + c_c e^{-x/\tau} + S_2 (x-\alpha) H(x,\alpha).
-\]
+$$ y = c_t + c_c e^{-x/\tau} + S_2 (x-\alpha) H(x,\alpha). $$
 
 If the nonlinear parameters \(\tau\) and \(\alpha\) are held fixed, the model becomes
 

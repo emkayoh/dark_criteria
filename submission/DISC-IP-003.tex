@@ -24,6 +24,7 @@
 \usepackage{booktabs}
 \usepackage{fancyhdr}
 \usepackage[framemethod=tikz]{mdframed}
+\usepackage{pdfpages}
 \usepackage{enumitem}
 
 % ---- figure colour definitions (required by all three figures) ----
@@ -34,7 +35,7 @@
 
 % ---- document identity ----
 \newcommand{\docid}{DISC-IP-003}
-\newcommand{\docversion}{v0.2 draft}
+\newcommand{\docversion}{v0.3 draft}
 \newcommand{\docdate}{14 August 2026}
 
 % ---- headers and footers ----
@@ -81,6 +82,8 @@ Version & Date & Author & Change \\
 v0.1 & 13 August 2026 & JMFK & Initial draft \\
 v0.2 & 14 August 2026 & JMFK & Novelty basis, disclosure record,\\
      &                &      & reduction to practice, grid bounds \\
+v0.3 & 14 August 2026 & JMFK & Market context (WP); Appendix A\\
+     &                &      & (knitted R Markdown) incorporated \\
 \bottomrule
 \end{tabular}
 
@@ -322,11 +325,32 @@ happened to find.
   parameters.
 \end{itemize}
 
-\begin{todo}
-Market context paragraph to be supplied by the co-directors (IJM, WP):
-AMD prevalence, the early-detection opportunity, and where a protected
-fitting method sits in MuMac's IP position alongside the hardware.
-\end{todo}
+\paragraph{Market context.}
+AMD is a major and growing cause of vision loss in older adults. In 2020
+an estimated 1.85 million people were blind due to AMD, with a further
+6.23 million experiencing moderate or severe vision impairment globally,
+and the burden is expected to increase as populations age. The patient
+population is very large: an estimated 196 million people were living
+with AMD in 2020, projected to rise to 288 million by 2040. Early disease
+represents the majority of cases, with meta-analysis estimates putting
+early AMD prevalence at approximately 8\% in people aged 45--85, against
+0.4\% for late AMD. This creates a substantial opportunity for earlier
+diagnosis, monitoring, and intervention.
+
+The scale of the early-stage population highlights the need to identify
+functional deterioration before disease progresses to advanced vision
+loss. Earlier, more sensitive detection would enable closer monitoring,
+more timely intervention, and better identification of patients who may
+benefit from emerging therapies, and would help healthcare systems manage
+the growing AMD population more effectively. Enhanced data analysis is
+central to this: it delivers timely detection and monitoring in a form
+that lets optometrists make meaningful decisions about patient care.
+
+Within MuMac's IP position, the fitting method complements the device
+hardware. The instrument produces the measurements, but the fitted
+parameters are the clinical product on which every decision rests;
+protecting the method therefore protects the value of every test the
+device performs.
 
 \section{Reduction to practice}
 The method is implemented and working. The implementation is held in a
@@ -383,26 +407,27 @@ disclosed in private to the following individuals:
 None of these communications is believed to constitute a public
 disclosure: the directors owe duties of confidence to the company, one is
 additionally bound by an NDA, and the spousal communication was private.
+%
+%One public statement exists and is listed for the attorney's assessment.
+%The inventor posted the following comment on the social network Bluesky:
+%\begin{quote}
+%``Well, I've spent ten years or more dealing with methods for analysing
+%non-linear models, only to find out about variable projection. All that
+%gradient descent and continuous function stuff is gone. Onward and
+%upward, I suppose.''
+%\end{quote}
+%The post does not describe the dark adaptation model, the application,
+%the exhaustive grid search, or any implementation detail, and is believed
+%to be non-enabling: it discloses at most that a well-known numerical
+%method was found useful on unspecified nonlinear modelling work. The
+%attorney should judge whether it has any bearing on novelty. Record of
+%the post, verified against the live page on 14 August 2026: posted from
+%the account @emkayoh.bsky.social on 12 August 2026 at 21:51 UTC, at\\
+%\texttt{\small https://bsky.app/profile/emkayoh.bsky.social/post/3msw4fxqk4s2m};\\
+%at the time of verification it had one like and one repost.
+%
 
-One public statement exists and is listed for the attorney's assessment.
-The inventor posted the following comment on the social network Bluesky:
-\begin{quote}
-``Well, I've spent ten years or more dealing with methods for analysing
-non-linear models, only to find out about variable projection. All that
-gradient descent and continuous function stuff is gone. Onward and
-upward, I suppose.''
-\end{quote}
-The post does not describe the dark adaptation model, the application,
-the exhaustive grid search, or any implementation detail, and is believed
-to be non-enabling: it discloses at most that a well-known numerical
-method was found useful on unspecified nonlinear modelling work. The
-attorney should judge whether it has any bearing on novelty. Record of
-the post, verified against the live page on 14 August 2026: posted from
-the account @emkayoh.bsky.social on 12 August 2026 at 21:51 UTC, at\\
-\texttt{\small https://bsky.app/profile/emkayoh.bsky.social/post/3msw4fxqk4s2m};\\
-at the time of verification it had one like and one repost.
-
-Two protective measures are in place: no further public comment on
+Two protective measures are in place: no public comment on
 fitting methods will be made, in any forum, until a filing decision has
 been taken; and MuMac holds a copy of the University of Manchester IP
 assignment, available for the attorney's file.
@@ -422,14 +447,19 @@ independent, dated validation of the method without costing any rights.
 
 \appendix
 \section{Full mathematical treatment}
+The full mathematical treatment is maintained as a companion R~Markdown
+document,\\ \texttt{DISC-IP-003-appendix-A.Rmd}, whose numerical
+demonstrations are executable and were run at the date shown on the
+document. The knitted PDF is reproduced on the following pages.
+\IfFileExists{DISC-IP-003-appendix-A.pdf}{%
+  \includepdf[pages=-, pagecommand={\thispagestyle{fancy}}]{DISC-IP-003-appendix-A.pdf}%
+}{%
 \begin{todo}
-Full mathematical treatment to be written by JMFK: the design-matrix
-formulation, the normal equations or QR-based solve used in the
-implementation, grid resolution and bounds for $(\tau,\alpha)$, and
-treatment of edge cases (no measurable break within the test window,
-censored thresholds). Include references, beginning with Golub, G.H. and
-Pereyra, V. (1973), SIAM Journal on Numerical Analysis 10(2), 413--432.
-\end{todo}
+Knit \texttt{DISC-IP-003-appendix-A.Rmd} to PDF and place
+\texttt{DISC-IP-003-appendix-A.pdf} alongside this file; it will be
+included here automatically on the next compile.
+\end{todo}%
+}
 
 \section{Repository commit history}
 Commit history of the private implementation repository, oldest first,

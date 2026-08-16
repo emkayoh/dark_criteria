@@ -1,0 +1,252 @@
+---
+title: "Variable projection fitting of dark adaptation recovery curves"
+subtitle: "Appendix A to DISC-IP-003: full mathematical treatment"
+author: "Dr Jeremiah MF Kelly"
+date: "14 August 2026"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+<!-- DISC-IP-003 Appendix A, v0.1 draft, JMFK.
+     Fixed date by design: this is an evidential record; do not restore
+     Sys.Date(). All chunks are base R only and verified to execute. -->
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# The model
+
+We model the recovery of visual sensitivity during dark adaptation with the function
+$$
+\text{thres}(t) = ct + cc\,e^{-t/\tau} + S2\,(t-\alpha)\,H(t-\alpha),
+$$
+where:
+
+- $\text{thres}(t)$ is the measured threshold at time $t$ after bleach;
+- $ct$ is the cone threshold, the plateau to which cone-mediated sensitivity recovers;
+- $cc$ is the cone coefficient, the amplitude of the cone recovery component;
+- $\tau$ is the cone time constant;
+- $S2$ is the slope of the second (rod-mediated) component of recovery;
+- $\alpha$ is the rod-cone break, the time at which rod recovery begins;
+- $H(t-\alpha)$ is the Heaviside step function, equal to $0$ for $t < \alpha$ and $1$ for $t \geq \alpha$.
+
+The term $(t-\alpha)H(t-\alpha)$ is therefore a ramp: it is zero before the rod-cone break and changes linearly with slope $S2$ after it.
+
+## Rewriting the model in a familiar form
+
+Most STEM scientists are familiar with the equation of a straight line,
+$$
+y = c + mx,
+$$
+where $y$ is the response, $x$ is the independent variable, $c$ is the intercept and $m$ is the gradient. Fitting this line to data by ordinary least squares (OLS) has a closed-form solution: no iteration, no starting guesses.
+
+Our aim is to show that, under one condition, our model has exactly the same character. We want to reach the form
+$$
+\mathbf{Y} = a + \mathbf{B}\,\mathbf{F}(\mathbf{x}),
+$$
+where $\mathbf{Y}$ is the vector of participant responses, $\mathbf{x}$ is the vector of response time stamps, $a$ is an intercept, $\mathbf{F}$ is a set of basis functions evaluated at those time stamps, and $\mathbf{B}$ is a vector of coefficients. This is the straight-line equation with the single term $mx$ replaced by a sum of curved terms.
+
+Suppose the two nonlinear parameters, $\tau$ and $\alpha$, are held fixed. Then define two basis functions:
+$$
+f_1(\mathbf{x}) = e^{-\mathbf{x}/\tau}, \qquad
+f_2(\mathbf{x}) = (\mathbf{x}-\alpha)\,H(\mathbf{x}-\alpha).
+$$
+The model becomes
+$$
+\mathbf{Y} = ct + cc\,f_1(\mathbf{x}) + S2\,f_2(\mathbf{x}) = a + \mathbf{B}\,\mathbf{F}(\mathbf{x}),
+$$
+with $a = ct$ playing the role of the intercept $c$, and $\mathbf{B} = (cc,\ S2)$. This is a linear model. Every quantity we do not know appears only as an intercept or a multiplying coefficient. Those familiar with OLS will recognise that the best-fitting $a$ and $\mathbf{B}$ can be computed together in closed form, exactly as for the straight line.
+
+## The point of variable projection
+
+The full model is non-linear only through $\tau$ and $\alpha$. Variable projection (VarPro) exploits this structure:
+
+1. For any candidate pair $(\tau, \alpha)$, the intercept and coefficients $(ct, cc, S2)$ are obtained analytically by least squares. They are never searched for.
+2. The optimisation therefore reduces from a five-parameter nonlinear search to a two-parameter search over $(\tau, \alpha)$ alone.
+
+This separation brings practical benefits. The search space collapses from five dimensions to two, so the fit is faster and far less prone to local minima. No starting guesses are required for the linear parameters, which removes a common source of fitting failure in clinical data. The two-dimensional $(\tau, \alpha)$ space is small enough to search exhaustively over a grid, giving a deterministic and reproducible fit.
+
+# The design matrix
+
+For $n$ observations $(t_i, y_i)$ and a fixed candidate pair $(\tau, \alpha)$, define the $n \times 3$ design matrix
+$$
+A(\tau, \alpha) =
+\begin{pmatrix}
+1 & e^{-t_1/\tau} & (t_1 - \alpha)H(t_1 - \alpha) \\
+\vdots & \vdots & \vdots \\
+1 & e^{-t_n/\tau} & (t_n - \alpha)H(t_n - \alpha)
+\end{pmatrix},
+$$
+whose columns are the constant, the cone basis function $f_1$, and the rod ramp $f_2$. The inner problem is then ordinary least squares,
+$$
+\hat{\theta}(\tau, \alpha) = \arg\min_{\theta} \lVert \mathbf{Y} - A(\tau,\alpha)\,\theta \rVert^2,
+\qquad \theta = (ct,\ cc,\ S2)^{\top}.
+$$
+
+In R the matrix is one line; note that $(t-\alpha)H(t-\alpha)$ is simply `pmax(t - alpha, 0)`:
+
+```{r design-matrix}
+build_A <- function(t, tau, alpha) {
+  cbind(1, exp(-t / tau), pmax(t - alpha, 0))
+}
+```
+
+# The inner solve: normal equations and QR
+
+The textbook solution of the inner problem is via the normal equations,
+$$
+\hat{\theta} = (A^{\top}A)^{-1} A^{\top} \mathbf{Y}.
+$$
+The implementation instead uses the QR decomposition $A = QR$, giving
+$$
+\hat{\theta} = R^{-1} Q^{\top} \mathbf{Y},
+$$
+computed by back-substitution without ever forming $A^{\top}A$.
+
+```{r inner-solve}
+solve_inner <- function(t, y, tau, alpha) {
+  qrA <- qr(build_A(t, tau, alpha))
+  list(theta = qr.coef(qrA, y),
+       rss   = sum(qr.resid(qrA, y)^2))
+}
+```
+
+The choice matters because forming $A^{\top}A$ squares the condition number, $\kappa(A^{\top}A) = \kappa(A)^2$, and our design matrix is ill-conditioned in exactly the regimes that occur in practice. When $\tau$ is large relative to the test window, the exponential column flattens towards an affine function of $t$; when $\alpha$ is small, the ramp column is close to an affine function of $t$ as well; together with the constant column the matrix approaches rank deficiency. The following makes the effect concrete:
+
+```{r conditioning}
+t_demo <- seq(0, 15, by = 1/3)
+A_typical <- build_A(t_demo, tau = 1.2, alpha = 3.8)
+A_ill     <- build_A(t_demo, tau = 200, alpha = 0.1)
+c(kappa_typical    = kappa(A_typical),
+  kappa_ill        = kappa(A_ill),
+  kappa_normal_eqs = kappa(crossprod(A_ill)))
+```
+
+QR works at the condition number of $A$ itself; the normal equations work at its square, which in the ill-conditioned case above is of order $10^9$ and approaching the limit of double precision. Interior grid points are well conditioned; QR ensures the boundary of the grid is handled as accurately as the interior.
+
+# Why it is called projection
+
+The fitted values for a candidate pair are the orthogonal projection of $\mathbf{Y}$ onto the column space of $A(\tau,\alpha)$. Writing $P_{A} = QQ^{\top}$ for the projector, the residual sum of squares that the outer search minimises is
+$$
+r(\tau, \alpha) = \lVert (I - P_{A})\,\mathbf{Y} \rVert^2,
+$$
+the squared length of the component of the data orthogonal to everything the linear parameters can explain. The linear parameters have been projected out of the problem, hence the name. The identity is easily verified numerically:
+
+```{r projector}
+set.seed(1)
+y_demo <- rnorm(length(t_demo))
+s  <- solve_inner(t_demo, y_demo, tau = 1.2, alpha = 3.8)
+Q  <- qr.Q(qr(build_A(t_demo, tau = 1.2, alpha = 3.8)))
+rss_projector <- sum(((diag(length(y_demo)) - Q %*% t(Q)) %*% y_demo)^2)
+all.equal(rss_projector, s$rss)
+```
+
+# The outer search
+
+## Grid and bounds
+
+The grid over $(\tau, \alpha)$ is bounded by physiology and protocol, consistent with Section 6 of DISC-IP-003. Operational experience shows the cone time constant is always below two minutes, so $\tau \in (0, 2]$ min. The range of $\alpha$ is contingent on the flash intensity of the test protocol; a fitted $\alpha$ beyond five minutes indicates an inadequate bleach rather than a physiological result, so $\alpha \in (0, 5]$ min, with the upper bound doubling as a validity check on the bleaching stage.
+
+```{r grid-spec}
+tau_grid   <- seq(0.05, 2.00, by = 0.05)   # 40 values
+alpha_grid <- seq(0.10, 5.00, by = 0.05)   # 99 values
+length(tau_grid) * length(alpha_grid)      # total closed-form solves
+```
+
+## The loop, cost, and tie-breaking
+
+```{r outer-loop}
+fit_varpro <- function(t, y, tau_grid, alpha_grid) {
+  best <- list(rss = Inf)
+  for (tau in tau_grid) for (alpha in alpha_grid) {
+    s <- solve_inner(t, y, tau, alpha)
+    if (s$rss < best$rss)
+      best <- list(theta = s$theta, rss = s$rss, tau = tau, alpha = alpha)
+  }
+  best
+}
+```
+
+The cost is exactly one $n \times 3$ QR decomposition per grid cell: fixed, data-independent, and known in advance. This is the appendix-level substantiation of the bounded-cost claim of DISC-IP-003. The strict inequality `s$rss < best$rss` is the tie-break rule: if two cells ever produce identical residuals, the first encountered in the fixed scan order (row-major over `tau_grid` then `alpha_grid`) is kept. The rule is stated so that the determinism claim, identical data yield identical parameters, holds without qualification.
+
+# Numerical demonstration
+
+We simulate a recovery curve with known parameters, sampled at three thresholds per minute over a fifteen-minute test, and fit it with the exhaustive grid at two noise levels: a clinically realistic threshold noise of 0.10 log units, and a low-noise condition of 0.02 log units.
+
+```{r demonstration}
+model <- function(t, p) p["ct"] + p["cc"] * exp(-t / p["tau"]) +
+  p["S2"] * pmax(t - p["alpha"], 0)
+
+truth <- c(ct = 1.0, cc = 2.0, tau = 1.2, alpha = 3.8, S2 = -0.25)
+t_obs <- seq(0, 15, by = 1/3)
+
+set.seed(1)
+y_noisy <- model(t_obs, truth) + rnorm(length(t_obs), sd = 0.10)
+y_clean <- model(t_obs, truth) + rnorm(length(t_obs), sd = 0.02)
+
+elapsed_noisy <- system.time(
+  fit_noisy <- fit_varpro(t_obs, y_noisy, tau_grid, alpha_grid)
+)["elapsed"]
+
+elapsed_clear <- system.time(
+  fit_clean <- fit_varpro(t_obs, y_clean, tau_grid, alpha_grid)
+)["elapsed"]
+
+data.frame(
+  parameter        = names(truth),
+  truth            = as.numeric(truth),
+  fit_sd_0.10      = round(c(fit_noisy$theta[1:2], fit_noisy$tau,
+                             fit_noisy$alpha, fit_noisy$theta[3]), 3),
+  fit_sd_0.02      = round(c(fit_clean$theta[1:2], fit_clean$tau,
+                             fit_clean$alpha, fit_clean$theta[3]), 3),
+  row.names = NULL
+)
+elapsed_noisy
+elapsed_clear
+t_del <- elapsed_noisy - elapsed_clear
+t_del
+```
+
+Two observations. First, the full grid of `r length(tau_grid) * length(alpha_grid)` closed-form solves completes in a fraction of a second on a laptop in interpreted R; a compiled implementation on device hardware is faster still, and the cost is fixed regardless of the data. Second, the parameters differ in how sharply the data constrain them. The linear parameters and $\tau$ are recovered closely even at clinical noise. The break time $\alpha$ carries the widest uncertainty of the five: the ramp contributes almost nothing to the fit in the neighbourhood of the break, so observations there carry little information about its exact position. At clinical noise the grid recovery is within a few tenths of a minute; at low noise it converges to the truth. This is a property of the estimation problem, not of the method; any fitting procedure faces it, and the exhaustive grid at least guarantees that the reported $\alpha$ is the best available over the whole physiological range.
+
+```{r fit-plot, fig.height=4.5, fig.width=7}
+par(las=1, bty = 'n')
+plot(t_obs, y_noisy, pch = 16, cex = 0.7, col = "grey40",
+     xlab = "Time in the dark (min)", ylab = "Threshold (log units)")
+t_fine <- seq(0, 15, by = 0.02)
+fitted_p <- c(ct = unname(fit_noisy$theta[1]), cc = unname(fit_noisy$theta[2]),
+              tau = fit_noisy$tau, alpha = fit_noisy$alpha,
+              S2 = unname(fit_noisy$theta[3]))
+lines(t_fine, model(t_fine, truth),    lty = 2)
+lines(t_fine, model(t_fine, fitted_p), lwd = 2)
+legend("topright", c("truth", "fitted"), lty = c(2, 1), lwd = c(1, 2), bty = "n")
+```
+
+# Edge cases
+
+**No break within the test window.** If a candidate $\alpha$ meets or exceeds the largest observation time, the ramp column of $A$ is identically zero and the matrix is rank deficient. R's rank-revealing QR handles this gracefully, returning `NA` for the unidentifiable coefficient while still fitting the remaining two columns:
+
+```{r rank-deficient}
+solve_inner(t_obs, y_noisy, tau = 1.2, alpha = 20)$theta
+```
+
+In the implementation this case is excluded by construction: the grid's upper bound of five minutes sits well inside the test window, so every candidate design matrix has full rank. Should a participant genuinely show no break within the window, the best fit lands at the boundary of the grid and is reported as such, flagging the test rather than silently extrapolating.
+
+**Thresholds censored at the instrument floor.** Early in recovery, thresholds can sit at the maximum stimulus intensity the instrument can present. Such observations are ceiling-censored: the true threshold is at or above the recorded value. Treating them as exact biases $cc$ and $\tau$ downwards. The implementation's treatment of censored points, exclusion from the fit or a censored-likelihood weighting, should be stated here once finalised for the Mk3.
+
+**Ties.** Covered above: strict inequality with a fixed scan order makes the selection deterministic even in the measure-zero event of equal residuals.
+
+# Determinism across platforms
+
+The algorithm is deterministic by construction: a fixed grid, a closed-form solve per cell, and a stated tie-break. On any single platform, identical data yield bit-identical parameters. Across platforms, macOS during development, a RISC-V device for the validation experiment, bit-level identity additionally depends on the floating-point summation order inside the linear algebra library, which may differ between BLAS/LAPACK builds. The practical statement is therefore: results are bit-identical on a given device, and agree across platforms to within floating-point rounding of the QR solve, which is many orders of magnitude below measurement noise and below the grid resolution. If bit-level cross-platform identity is ever required, a fixed-order reference implementation of the $n \times 3$ QR is small enough to write directly.
+
+# References
+
+- Golub, G.H. and Pereyra, V. (1973). The differentiation of pseudo-inverses and nonlinear least squares problems whose variables separate. *SIAM Journal on Numerical Analysis*, 10(2), 413--432.
+- Golub, G.H. and Pereyra, V. (2003). Separable nonlinear least squares: the variable projection method and its applications. *Inverse Problems*, 19(2), R1--R26.
+- O'Leary, D.P. and Rust, B.W. (2013). Variable projection for nonlinear least squares problems. *Computational Optimization and Applications*, 54(3), 579--593.
+- Lamb, T.D. and Pugh, E.N. Jr (2004). Dark adaptation and the retinoid cycle of vision. *Progress in Retinal and Eye Research*, 23(3), 307--380.
+
+Page ranges verified against `profile_least_squares_references.bib` 14/08/2026.
