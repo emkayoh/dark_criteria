@@ -39,17 +39,22 @@ source("~/Dropbox/Mumac_/CODE_1/dark_criteria/code/dc_save_results.R")
 
 ct_fixed <- -1.7
 cc_fixed <- 2
-tau_fixed <- 0.6
+tau_fixed <- 2.4 # fourth of three experiments varying tau
 
-analysis_version <- "cd993fd"
+analysis_version <- "ef910d0"
 
-S2_values <- c(0, -0.01, -0.05, -0.1, -0.15, -0.2, -0.25, -0.3)
+S2_values <- c(0, -0.01, -0.05, -0.10, -0.15, -0.2, -0.25, -0.3)
 
 alpha_values <- c(3, 5, 7, 9)
 
 noise_values <- c(0, 0.05, 0.1, 0.15, 0.2, 0.3)
 
 n_replicates <- 250L
+
+# S2_values <- c(-0.10)
+# alpha_values <- c(5)
+# noise_values <- c(0.1)
+# n_replicates <- 1L
 
 
 # --------------------------------------------------
@@ -74,11 +79,11 @@ x <- test_df$time
 
 n_experiments <- nrow(experiment_grid)
 
-for (ii in 1) {
+for (ii in seq_len(nrow(experiment_grid))) {
 
 	job <- experiment_grid[ii, ]
 
-	result_row <- run_experiment(job = job, experiment_index = ii, x = x, ct_fixed = ct_fixed, cc_fixed = cc_fixed, tau_fixed = tau_fixed,
+	result_row <- run_experiment(job = job, experiment_index = ii, x = x, ct_fixed = ct_fixed, cc_fixed = cc_fixed, tau_fixed = tau_fixed, 
 		analysis_version = analysis_version)
 
 	append_result_row(result_row, results_file)

@@ -16,6 +16,23 @@
 #'
 #' @return A list containing the best parameter vector, RSS, MSE, the initial
 #'   grid result, and optimisation diagnostics.
+# dc_findInitialParametersProfiled.R  (JMFK)
+# Profiled (variable projection) initial parameter search for the P5c model.
+#
+# Changes in this revision (2026-08-18):
+#   1. BOUNDARY FIX. When the unconstrained S2 estimate falls outside
+#      S2_bounds (or within S2_zero_tol of zero), the linear parameters are
+#      now RE-SOLVED with S2 fixed at the bound, rather than clamping S2 and
+#      retaining ct and cc from the unconstrained fit. For a single active
+#      bound on a linear coefficient this refit is the exact constrained
+#      least-squares solution, so boundary candidates now carry their true
+#      RSS and compete fairly with interior cells.
+#   2. NM CONTRIBUTION. The return value now reports the refinement stage's
+#      contribution explicitly (nm_rss_improvement, nm_rss_improvement_frac,
+#      nm_tau_shift, nm_alpha_shift) so the experiment parser can carry it
+#      into the results columns.
+#   3. S2_boundary status ("interior", "S2_lower", "S2_upper") is returned
+#      directly rather than being inferred downstream from the S2 value.
 
 findInitialParametersProfiled <- function(
     time,
@@ -86,21 +103,43 @@ findInitialParametersProfiled <- function(
         }
 
         S2_est <- unname(coefficients["S2"])
+        S2_boundary <- "interior"
+        S2_fixed <- NA_real_
 
-        # Treat very small positive or negative estimates as zero.
-        if (abs(S2_est) <= S2_zero_tol) {
-            S2_est <- 0
+        # Decide whether a bound is active.
+        if (abs(S2_est) <= S2_zero_tol || S2_est > S2_bounds[2L]) {
+            S2_fixed <- S2_bounds[2L]        # upper bound (zero)
+            S2_boundary <- "S2_upper"
+        } else if (S2_est < S2_bounds[1L]) {
+            S2_fixed <- S2_bounds[1L]        # lower bound (max steepness)
+            S2_boundary <- "S2_lower"
         }
 
-        # Clamp the starting estimate rather than rejecting the candidate.
-        S2_est <- min(
-            max(S2_est, S2_bounds[1L]),
-            S2_bounds[2L]
-        )
+        if (is.na(S2_fixed)) {
+            # Interior: unconstrained solution stands.
+            fitted <- drop(design %*% coefficients)
+        } else {
+            # Active bound: re-solve ct and cc exactly, with S2 fixed.
+            # Move the (now known) rod contribution to the offset.
+            offset <- S2_fixed * rod_term
+            design2 <- design[, c("ct", "cc"), drop = FALSE]
 
-        coefficients["S2"] <- S2_est
+            qr_fit2 <- qr(design2)
 
-        fitted <- drop(design %*% coefficients)
+            if (qr_fit2$rank < 2L) {
+                return(NULL)
+            }
+
+            coef2 <- qr.coef(qr_fit2, threshold - offset)
+
+            if (any(!is.finite(coef2))) {
+                return(NULL)
+            }
+
+            coefficients <- c(coef2, S2 = S2_fixed)
+            fitted <- drop(design2 %*% coef2) + offset
+        }
+
         residuals <- threshold - fitted
         rss <- sum(residuals * residuals)
 
@@ -113,10 +152,11 @@ findInitialParametersProfiled <- function(
                 ct = unname(coefficients["ct"]),
                 cc = unname(coefficients["cc"]),
                 tau = tau,
-                S2 = S2_est,
+                S2 = unname(coefficients["S2"]),
                 alpha = alpha
             ),
-            RSS = rss
+            RSS = rss,
+            S2_boundary = S2_boundary
         )
     }
 
@@ -149,14 +189,14 @@ findInitialParametersProfiled <- function(
     refinement_skipped <- FALSE
     refinement_reason <- NA_character_
 
-    # When S2 is effectively zero, alpha is unidentified. Retain the grid
+    # When S2 sits on the zero bound, alpha is unidentified. Retain the grid
     # result rather than attempting continuous two-parameter refinement.
     if (
         isTRUE(refine) &&
-        abs(best_grid$params["S2"]) <= S2_zero_tol
+        best_grid$S2_boundary == "S2_upper"
     ) {
         refinement_skipped <- TRUE
-        refinement_reason <- "S2 effectively zero; alpha unidentified"
+        refinement_reason <- "S2 on zero bound; alpha unidentified"
     } else if (isTRUE(refine)) {
         profile_objective <- function(z) {
             tau <- exp(z[1L])
@@ -229,13 +269,28 @@ findInitialParametersProfiled <- function(
         best = best$params,
         performance = best$RSS / n,
         RSS = best$RSS,
+        S2_boundary = best$S2_boundary,
         grid_best = best_grid$params,
         grid_RSS = best_grid$RSS,
+        grid_S2_boundary = best_grid$S2_boundary,
         refined = !is.null(optimisation) &&
             best$RSS < best_grid$RSS,
         refinement_skipped = refinement_skipped,
         refinement_reason = refinement_reason,
+        nm_rss_improvement = best_grid$RSS - best$RSS,
+        nm_rss_improvement_frac = if (best_grid$RSS > 0) {
+            (best_grid$RSS - best$RSS) / best_grid$RSS
+        } else {
+            0
+        },
+        nm_tau_shift = unname(best$params["tau"] - best_grid$params["tau"]),
+        nm_alpha_shift = unname(best$params["alpha"] - best_grid$params["alpha"]),
         converged = if (is.null(optimisation)) {
+            NA
+        } else {
+            optimisation$convergence == 0L
+        },
+        converged_nm = if (is.null(optimisation)) {
             NA
         } else {
             optimisation$convergence == 0L
@@ -243,5 +298,3 @@ findInitialParametersProfiled <- function(
         optimisation = optimisation
     )
 }
-
-
