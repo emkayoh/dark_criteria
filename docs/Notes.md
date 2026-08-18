@@ -172,3 +172,44 @@ How should a partially linear dark-adaptation model be fitted?
 
 Those are genuinely different questions with different audiences. I think that's why the idea of two papers emerged so naturally—it wasn't forced; the work itself divided into two coherent stories.
 
+
+
+18/8/26
+
+Gradient-descent refinement presented an inherently circular tuning problem: appropriate step sizes depended on the local curvature of the objective surface, but this curvature could only be characterised reliably near the unknown optimum. The problem was exacerbated by substantial anisotropy, particularly the very shallow curvature associated with τ. Consequently, failure of GD to improve the objective could not readily be distinguished from inadequate tuning. Variable projection removes this difficulty by eliminating the linear parameters analytically and reducing the nonlinear optimisation to (α,τ).
+
+
+
+
+After VARPRO plus optimisation of (α,τ), GD is being started at a point where:
+
+∂(ct,cc,S2)
+----------- ≈0
+   ∂RSS
+
+because the linear parameters have already been solved optimally, and
+
+∂(α,τ)
+------ ≈0
+∂RSS
+
+because those two nonlinear parameters have already been optimised.
+
+So plain GD is being asked to improve a solution that is already stationary in all five directions, to numerical tolerance.
+
+
+Following variable projection and optimisation of the remaining nonlinear parameters, the subsequent gradient-descent stage begins very close to a stationary point of the full five-parameter least-squares problem. Consequently, any residual improvement available to GD is necessarily very small. This task is further complicated by the strongly anisotropic local curvature, particularly the shallow dependence on τ, making step-size selection difficult: steps large enough to produce meaningful movement in shallow directions may be excessive in steeper directions, whereas conservative steps yield changes approaching numerical tolerance. The very small gains observed with GD are therefore consistent with the VARPRO solution already lying effectively at the full least-squares optimum.
+
+
+In nonlinear optimisation, many results become obvious only after they have been established. Once the relevant structure is exposed, the behaviour can appear inevitable; beforehand, that same behaviour is often not safely predictable.
+
+treat healthy S2 as a population distribution conditional on age and measurement uncertainty, then ask whether a new subject is improbable under that distribution.
+
+
+a normative model: learn the distribution of a measurement in healthy people as a function of age, then quantify how unusual an individual is relative to that reference population. Normative modelling is specifically designed to make individual-level statements relative to population variation rather than merely comparing group averages
+Marquand AF, Rezek I, Buitelaar J, Beckmann CF. Understanding Heterogeneity in Clinical Cohorts Using Normative Models: Beyond Case-Control Studies. Biol Psychiatry. 2016 Oct 1;80(7):552-61. doi: 10.1016/j.biopsych.2015.12.023. Epub 2016 Jan 6. PMID: 26927419; PMCID: PMC5023321.
+
+
+Rapida answers the question 
+“How probable is this dark-adaptation response for a healthy person of this age?”
+
