@@ -1,10 +1,14 @@
 # dc_analysis.R  (JMFK)
 # Analysis of the dark criteria numerical experiment:
 #   Q1  does gradient descent refinement add anything to the profiled fit?
+#   Q1b what does the NM refinement stage contribute over the raw grid?
 #   Q2  parameter detection thresholds by noise level, under honest
 #       boundary policies, for the CI rule and the AICc rule.
-# Self-contained: run top to bottom against the parsed results CSV.
+#   Q3  CI calibration: coverage of S2 and alpha intervals.
+# Self-contained: run top to bottom against one parsed results CSV.
 # Policies encoded below were settled empirically on 2026-08-17.
+# Revised 2026-08-18 for the corrected fit function (exact constrained
+# boundary solve) and the 78-column results format.
 
 library(dplyr)
 library(ggplot2)
@@ -13,19 +17,39 @@ library(tidyr)
 ## ---- load and check ------------------------------------------------------
 
 res_dir <- "~/Dropbox/Mumac_/CODE_1/dark_criteria/results"
-foi <- sort(list.files(res_dir, "^dc_experiment_results_.*\\.csv$",
-                       full.names = TRUE), decreasing = TRUE)[3]
+
+# Select the dataset explicitly. Either set FOI_NAME to a filename, or set
+# FOI_INDEX to pick from the reverse-sorted listing (1 = newest).
+FOI_NAME  <- NA_character_
+FOI_INDEX <- 1L
+
+files <- sort(list.files(res_dir, "^dc_experiment_results_.*\\.csv$",
+                         full.names = TRUE), decreasing = TRUE)
+foi <- if (!is.na(FOI_NAME)) file.path(res_dir, FOI_NAME) else files[FOI_INDEX]
 results <- read.csv(foi) |> as_tibble()
 message("Loaded: ", basename(foi), "  (", nrow(results), " rows)")
 
 stopifnot(length(unique(results$git_commit)) == 1)   # one code version only
+
+# Refuse to run silently against the old 64-column format.
+new_cols <- c("grid_rss", "grid_S2_boundary", "nm_refined", "nm_skipped",
+              "nm_converged", "nm_rss_improvement", "nm_rss_improvement_frac",
+              "nm_tau_shift", "nm_alpha_shift", "profile_boundary_mismatch",
+              "gdr_status")
+stopifnot(all(new_cols %in% names(results)))
+
+# The boundary cross-check flag should be all FALSE; report if not.
+n_mismatch <- sum(results$profile_boundary_mismatch, na.rm = TRUE)
+if (n_mismatch > 0) {
+  warning(n_mismatch, " rows with profile_boundary_mismatch = TRUE")
+}
 
 results <- results |>
   mutate(profile_boundary = factor(profile_boundary,
                                    levels = c("interior", "S2_lower", "S2_upper")))
 
 d <- results
-TAU <- as.character(unique(results$tau_real))
+TAU <- paste(sort(unique(results$tau_real)), collapse = "_")
 
 ## ---- Q1: what does gradient descent add? --------------------------------
 # Interior fits only (GD is not attempted from a pinned constraint) and
@@ -59,6 +83,51 @@ gd_convergence <- d |>
   filter(gdr_attempted) |>
   summarise(gd_fail = mean(!gdr_converged), n = n(), .by = noise_sd)
 print(gd_convergence)
+
+# Why GD stops: "no_improving_step" is stationarity evidence, distinct
+# from genuine numerical failure.
+gd_status_tab <- d |>
+  filter(gdr_attempted) |>
+  count(noise_sd, gdr_status) |>
+  pivot_wider(names_from = gdr_status, values_from = n, values_fill = 0)
+print(gd_status_tab)
+
+## ---- Q1b: what does the NM refinement stage contribute? -----------------
+# Three-stage accounting: grid -> NM (continuous profiled refinement)
+# -> GD (full five-parameter descent). NM's contribution is real but small;
+# GD's should be nil. Interior fits only, since NM is skipped on zero pins.
+
+nm_summary <- d |>
+  filter(profile_boundary == "interior") |>
+  summarise(
+    n               = n(),
+    nm_refined_rate = mean(nm_refined),
+    nm_fail_rate    = mean(!nm_converged, na.rm = TRUE),
+    nm_frac_med     = median(nm_rss_improvement_frac),
+    nm_frac_q90     = quantile(nm_rss_improvement_frac, 0.9),
+    tau_shift_med   = median(abs(nm_tau_shift)),
+    tau_shift_q90   = quantile(abs(nm_tau_shift), 0.9),
+    alpha_shift_med = median(abs(nm_alpha_shift)),
+    alpha_shift_q90 = quantile(abs(nm_alpha_shift), 0.9),
+    .by = noise_sd) |>
+  arrange(noise_sd)
+print(nm_summary)
+
+nm_skips <- d |>
+  count(nm_skipped, nm_skip_reason)
+print(nm_skips)
+
+# NM vs GD contribution side by side (fraction of each stage's input RSS).
+stage_summary <- d |>
+  filter(profile_boundary == "interior") |>
+  summarise(
+    nm_frac_med = median(nm_rss_improvement_frac),
+    nm_frac_q90 = quantile(nm_rss_improvement_frac, 0.9),
+    gd_frac_med = median(rss_improvement_fraction, na.rm = TRUE),
+    gd_frac_q90 = quantile(rss_improvement_fraction, 0.9, na.rm = TRUE),
+    .by = noise_sd) |>
+  arrange(noise_sd)
+print(stage_summary)
 
 ## ---- boundary structure (context for the policies below) ----------------
 
@@ -122,6 +191,24 @@ fpr_final <- det |> filter(!true_biphasic, noise_sd > 0) |>
   arrange(noise_sd)
 print(fpr_final)
 
+## ---- Q3: CI calibration (coverage) --------------------------------------
+# Nominal 95% coverage expected for interior fits with ci_ok. The clinical
+# question is whether S2 coverage holds while alpha coverage degrades with
+# slow cone recovery (ridge entanglement of alpha with the cone tail).
+# Compare this table across the four tau sets.
+
+coverage <- d |>
+  filter(profile_boundary == "interior", ci_ok, true_biphasic) |>
+  summarise(
+    n               = n(),
+    S2_coverage     = mean(S2_ci_covers_real),
+    alpha_coverage  = mean(alpha_ci_covers_real),
+    S2_width_med    = median(S2_ci_width),
+    alpha_width_med = median(alpha_ci_width),
+    .by = noise_sd) |>
+  arrange(noise_sd)
+print(coverage)
+
 ## ---- detection surface figure -------------------------------------------
 
 surf <- det |> filter(true_biphasic) |>
@@ -138,7 +225,7 @@ p_surface <- surf |>
        colour = "noise sd", linetype = "rule") +
   theme_minimal()
 print(p_surface)
-ggsave(file.path(res_dir, paste0("tau_",TAU, "_detection_surface.pdf")),
+ggsave(file.path(res_dir, paste0("tau_", TAU, "_detection_surface.pdf")),
        p_surface, width = 7, height = 4.5)
 
 ## ---- ROC: is AICc at matched FPR equivalent to the CI rule? -------------
@@ -173,23 +260,37 @@ p_roc <- ggplot(roc_df, aes(fpr, tpr)) +
        caption = "curve: AICc threshold sweep; red point: CI rule") +
   theme_minimal()
 print(p_roc)
-ggsave(file.path(res_dir, paste0('tau_', TAU,"_roc_ci_vs_aicc.pdf")), p_roc, width = 8, height = 6)
+ggsave(file.path(res_dir, paste0("tau_", TAU, "_roc_ci_vs_aicc.pdf")),
+       p_roc, width = 8, height = 6)
 
 ## ---- one-glance result objects ------------------------------------------
 # q1_summary     GD redundancy by noise level
+# gd_status_tab  why GD stops (no_improving_step = stationarity evidence)
+# nm_summary     NM refinement contribution over the raw grid
+# nm_skips       refinement skip reasons
+# stage_summary  NM vs GD contribution side by side
 # ceiling_final  attainable sensitivity ceilings
 # thr_final      90% detection thresholds, honestly masked
 # fpr_final      false-positive rates under final policies
+# coverage       CI calibration for S2 and alpha
 # p_surface      detection surface (monograph central figure candidate)
 # p_roc          rule dominance check
 
-txtfile <- file.path(res_dir, paste0("tau_",TAU,"_tables.txt"))
+txtfile <- file.path(res_dir, paste0("tau_", TAU, "_tables.txt"))
 sink(file = txtfile)
 print(foi)
 print("q1_summary")
 print(q1_summary)
 print("gd_convergence")
 print(gd_convergence)
+print("gd_status_tab")
+print(gd_status_tab)
+print("nm_summary")
+print(nm_summary)
+print("nm_skips")
+print(nm_skips)
+print("stage_summary")
+print(stage_summary)
 print("boundary_tab")
 print(ftable(boundary_tab))
 print("ceiling_final")
@@ -198,6 +299,7 @@ print("thr_final")
 print(thr_final)
 print("fpr_final")
 print(fpr_final)
-print(p_surface)
-print("p_surface")
-sink(file= NULL)
+print("coverage")
+print(coverage)
+sink(file = NULL)
+message("Tables written: ", txtfile)
