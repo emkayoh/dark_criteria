@@ -1,0 +1,150 @@
+commit 420e41a5a95da5176d0053629381f8e781a133ee
+Author: Jeremiah Kelly <emkayoh@mac.com>
+Date:   2026-08-03 15:29:40 +0100
+
+    first commit
+
+commit bcb86177c5e035c4882485c91ceb85bb76400232
+Author: Jeremiah Kelly <emkayoh@mac.com>
+Date:   2026-08-03 20:35:36 +0100
+
+    Initial commit
+
+commit 7b19a8d007b83365484fd00ccae2779a936ca8fd
+Author: Jeremiah Kelly <emkayoh@mac.com>
+Date:   2026-08-05 21:49:25 +0100
+
+    Initial commit
+
+commit dd5ea31013cbbe1c109a1a90b7ee1c311e2bc292
+Author: Jeremiah Kelly <emkayoh@mac.com>
+Date:   2026-08-06 00:12:35 +0100
+
+    Introduce profile least-squares initialisation for P5c optimisation
+    
+    - recognise the partially linear structure of the P5c model
+    - replace five-dimensional grid search with profiled least-squares initialisation
+    - update P3 and P5c fitting routines
+    - improve pseudo-Huber optimisation and supporting utilities
+    - add simulation, result-row and initialisation infrastructure
+    - document optimisation strategy and publication plans
+    
+    This commit establishes the reference implementation for the next-generation
+    optimisation pipeline and forms the baseline for the planned methods paper.
+
+commit cd993fdeab758f5b1c5b89c002929813860ad6a2
+Author: Jeremiah Kelly <emkayoh@mac.com>
+Date:   2026-08-06 00:15:25 +0100
+
+    final comment 2026-08-06
+
+commit 4ca5e793193cd5af02eea9eb860ee47e9119565f
+Author: Jeremiah Kelly <emkayoh@mac.com>
+Date:   2026-08-06 11:20:39 +0100
+
+    Add discrimination and inference framework
+    
+    Add profiled P5c initialisation, Jacobian and Hessian diagnostics, prediction intervals, bootstrap support, AICc checks, experiment definitions, research prompts, references, and updated notes.
+
+commit f755c3e7bbf093da6a45c30391458c2478e597b9
+Author: Jeremiah Kelly <emkayoh@mac.com>
+Date:   2026-08-06 12:31:21 +0100
+
+    simplified function to fit exponentail decay via profiled least squares
+
+commit ba96f60972f577871698e00cf17404b9239fe7f6
+Author: Jeremiah Kelly <emkayoh@mac.com>
+Date:   2026-08-06 12:32:04 +0100
+
+    minor alterations to code base in preparation for the discrimantion study
+
+commit 18b12ab1f602d02b1974206729f13c894d05f4e1
+Author: Jeremiah Kelly <emkayoh@mac.com>
+Date:   2026-08-14 01:19:25 +0100
+
+    Refine profiled least-squares fit for P5c model; update references
+
+commit fb67d373fb55b87aa3b7beecc25334f059b12336
+Author: Jeremiah Kelly <emkayoh@mac.com>
+Date:   2026-08-14 01:19:25 +0100
+
+    Add repo plan, resources, commit-history export, and gitignore
+
+commit 9cbe804faec303bc824e32dfab1e94ed72aa908c
+Author: Jeremiah Kelly <emkayoh@mac.com>
+Date:   2026-08-14 01:21:22 +0100
+
+    Remove editor scratch and autosave files
+
+commit bb98999e523f1d6fb0b1979938debd40e6717b03
+Author: Jeremiah Kelly <emkayoh@mac.com>
+Date:   2026-08-15 17:26:18 +0100
+
+    Checkpoint profiled P5c numerical experiment pipeline: Checkpoint profiled P5c numerical experiment pipeline
+    
+    - consolidate code needed for the P5c/P3 discrimination experiment
+    - define fixed experimental grid over S2, alpha, noise and replicates
+    - add single-replicate run_experiment workflow
+    - formalise result-row schema for simulation provenance and fit outputs
+    - record Git commit reference with each simulation
+    - add profile and OLS parameter estimates and errors
+    - add Jacobian conditioning and confidence-interval diagnostics
+    - add P3/P5c AICc comparison and classification outcomes
+    - add appendable timestamped CSV result storage for interrupt recovery
+    - remove obsolete and superseded analysis scripts
+    
+    Next: allow Jacobian and CI failures on noisy datasets to degrade to NA
+    without terminating otherwise successful replicates.
+
+commit 48a3a9c93679ad1458df7d6581de4dc657eb24e5
+Author: Jeremiah Kelly <emkayoh@mac.com>
+Date:   2026-08-16 12:40:45 +0100
+
+    Refine profile-first P5c experiment pipeline
+    
+    - add exact P3 null condition with S2 = 0
+    - improve numerical precision of the P3 fit
+    - use profiled P5c estimates as the primary solution
+    - skip GDR at profile boundaries
+    - record profile and GDR RSS diagnostics
+    - add Jacobian and CI validity flags
+    - standardise gradient refinement output on GDR naming
+    - retain AICc model classification and provenance
+
+commit ef910d002618847d4cd1d0ad240e27ee99064a35
+Author: Jeremiah Kelly <emkayoh@mac.com>
+Date:   2026-08-16 13:06:19 +0100
+
+    Reorganise project documentation and remove obsolete files
+    
+    - move research notes and supporting material into docs and code/notes
+    - consolidate patent submission sources under submission
+    - add Titan setup and recovery documentation
+    - add patent appendix source and rendered PDF
+    - remove superseded experimental R scripts
+    - remove obsolete LaTeX build artefacts
+    - update gitignore for local and generated files
+
+commit 9ce4a604e4496446487ed9453ee5fefde3d8bae9
+Author: Jeremiah Kelly <emkayoh@mac.com>
+Date:   2026-08-18 15:38:01 +0100
+
+    new refs added
+
+commit 94b0c5e89481aac4aee6a291be69db3c979794a7
+Author: Jeremiah Kelly <emkayoh@mac.com>
+Date:   2026-08-18 15:38:31 +0100
+
+    new notes added
+
+commit 5bb3cf41c9d7f29398c25b7b6a89b31d675acd26
+Author: Jeremiah Kelly <emkayoh@mac.com>
+Date:   2026-08-18 15:40:43 +0100
+
+    new code updates see headers
+
+commit 012d73eb4a2c1be8a270fed0632d80525c0486eb
+Author: Jeremiah Kelly <emkayoh@mac.com>
+Date:   2026-08-18 21:17:08 +0100
+
+    CLI version that accesses Git commit code

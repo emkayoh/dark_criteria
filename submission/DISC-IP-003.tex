@@ -35,8 +35,8 @@
 
 % ---- document identity ----
 \newcommand{\docid}{DISC-IP-003}
-\newcommand{\docversion}{v0.3 draft}
-\newcommand{\docdate}{14 August 2026}
+\newcommand{\docversion}{v0.4 draft}
+\newcommand{\docdate}{19 August 2026}
 
 % ---- headers and footers ----
 \pagestyle{fancy}
@@ -84,6 +84,9 @@ v0.2 & 14 August 2026 & JMFK & Novelty basis, disclosure record,\\
      &                &      & reduction to practice, grid bounds \\
 v0.3 & 14 August 2026 & JMFK & Market context (WP); Appendix A\\
      &                &      & (knitted R Markdown) incorporated \\
+v0.4 & 19 August 2026 & JMFK & Validation experiment completed;\\
+     &                &      & alpha flag reworded; grid spec\\
+     &                &      & aligned to implementation \\
 \bottomrule
 \end{tabular}
 
@@ -293,12 +296,13 @@ operator-informed test curtailment) should be central to that assessment.
 The grid bounds are clinically derived. Operational experience shows that
 the cone time constant $\tau$ is always below two minutes. The range of
 the rod--cone break $\alpha$ is contingent on the flash intensity used by
-the test protocol; a fitted $\alpha$ beyond five minutes indicates that
-the subject received a flash well below the intensity required for
-rate-limited recovery of rod photoreceptor function, and flags an
-inadequate bleach rather than a physiological result. The upper bound on
-$\alpha$ therefore doubles as a built-in validity check on the bleaching
-stage of the test. The grid over $(\tau,\alpha)$ is bounded by physiology
+the test protocol. A fitted $\alpha$ beyond five minutes prompts review
+rather than acceptance: with a verified bleach it is consistent with
+delayed rod-mediated recovery, itself an indicator of early AMD; without
+one it indicates that the subject received a flash below the intensity
+required for rate-limited recovery of rod photoreceptor function. The
+five-minute rule therefore serves both as a validity check on the
+bleaching stage and as a diagnostic signal, according to context. The grid over $(\tau,\alpha)$ is bounded by physiology
 and protocol, and the exhaustive search covers the full clinically
 relevant range: the accepted fit is the best fit over all physiologically
 plausible parameter pairs, not merely the best that a heuristic search
@@ -356,10 +360,12 @@ device performs.
 The method is implemented and working. The implementation is held in a
 private GitHub repository under the inventor's control; no person other
 than the inventor is aware of the codebase, and access is restricted
-accordingly. Early implementations were developed and run on the
-inventor's local development machine (macOS). The large-scale numerical
-experiment described in Section~9.3, planned to investigate the validity
-of the methodology, will be run on a novel RISC-V device.
+accordingly. Development and the validation experiment reported below
+were run on the inventor's local development machine (macOS). A
+seed-matched confirmatory run on a RISC-V platform is planned, both as
+independent validation on an open architecture and as evidence of
+cross-platform agreement. The forthcoming Mk3 instrument is expected to
+run the method on a Raspberry Pi 4B or a comparable compact platform.
 
 The repository's commit history provides contemporaneous, timestamped
 evidence of development and is reproduced in Annex~B. The repository was
@@ -384,6 +390,79 @@ several instances of simulated data. The simulated data serve verification
 demonstrate the method working on measurement noise of clinical
 character.
 
+\subsection{Validation experiment}
+The validation experiment anticipated in Section~9.3 has been completed.
+Recovery curves were simulated across eight rod slopes, four rod--cone
+break times, six threshold noise levels, and four cone time constants
+($\tau = 0.6$, $1.2$, $1.8$, $2.4$ minutes), with 250 seeded replications
+per condition: 192{,}000 replications in total. Every replication was
+fitted by the profiled search, by continuous refinement of the profiled
+objective, and by full five-parameter gradient descent, and was
+additionally compared against a cone-only model. Each result row records
+its seed and the commit hash of the code that produced it. Three findings
+bear directly on this disclosure.
+
+\paragraph{Gradient descent is redundant.}
+Applied to the converged profiled solution, gradient descent produced a
+median reduction in residual sum of squares of zero at every realistic
+noise level in all four cone regimes, moved parameter estimates by a
+median of between $10^{-8}$ and $10^{-4}$ minutes (four to seven orders of
+magnitude below the grid resolution), and moved them away from the true
+values as often as toward them. Between 21\% and 53\% of descent runs
+terminated reporting that no improving step existed. The profiled
+solution is stationary to numerical tolerance in all five parameters:
+the closed-form solve enforces stationarity exactly in the three linear
+parameters, and the refinement stage achieves it in the remaining two.
+The iterative stage of the current instruments is therefore not merely
+replaceable but demonstrably without effect.
+
+\paragraph{Detection thresholds are quantified.}
+The clinically important question is not only whether the method fits a
+curve, but how small a rod deficit it can reliably find. A shallow rod
+slope produces only a slight downward bend in the recovery curve, and
+measurement noise can hide a slight bend or imitate one. There is
+therefore a limit: below some slope, the rod phase cannot be told apart
+from noise. The experiment measured that limit by simulating curves whose
+true slope was known, and recording how often the method correctly
+reported a rod phase.
+
+Two quantities characterise the limit. The \emph{detection threshold} is
+the shallowest slope the method identifies on $90\%$ of occasions. The
+\emph{false-positive rate} is how often it reports a rod phase in
+simulated data that contain none; that arm of the experiment provides the
+control against which the threshold is meaningful.
+
+Using a rule that declares a rod phase when the confidence interval for
+the slope excludes zero, the detection threshold was $0.016$ to $0.025$
+log units per minute when threshold noise was $0.05$ log units, rising to
+$0.163$ to $0.175$ when noise was $0.30$: as the measurements become
+noisier, only steeper deficits remain detectable. False positives
+occurred in $1.2\%$ to $6.2\%$ of null cases, and did not rise
+systematically with noise, because the confidence interval widens as the
+data degrade and the rule becomes correspondingly more cautious.
+
+Across the fourfold range of cone time constants the detection threshold
+was consistently about $0.5$ to $0.6$ times the threshold noise per
+minute. This is a useful engineering result: it converts a measurable
+property of the instrument, its threshold noise, directly into a
+statement of the smallest rod deficit the instrument can detect, and it
+holds regardless of how quickly the patient's cones recover.
+
+\paragraph{The fitting method's inference is robust where model
+comparison is not.}
+An alternative rule based on information-criterion model comparison loses
+sensitivity as cone recovery slows: its maximum attainable sensitivity at
+a noise of $0.30$ fell from $0.958$ to $0.698$ as $\tau$ increased from
+$0.6$ to $2.4$ minutes, because a slow cone tail absorbs part of the rod
+branch's curvature. The interval rule derived from the profiled fit did
+not fall below $0.988$ in any condition. Since slowed cone recovery is
+itself a feature of early disease, this robustness applies precisely to
+the population for which the instrument is intended.
+
+The experiment was repeated in full following a correction to the
+treatment of fits at the slope bounds; no reported quantity changed by
+more than $0.004$.
+
 \section{Inventorship and disclosure history}
 \subsection{Inventorship}
 The method described in this document was conceived and implemented
@@ -407,27 +486,26 @@ disclosed in private to the following individuals:
 None of these communications is believed to constitute a public
 disclosure: the directors owe duties of confidence to the company, one is
 additionally bound by an NDA, and the spousal communication was private.
-%
-%One public statement exists and is listed for the attorney's assessment.
-%The inventor posted the following comment on the social network Bluesky:
-%\begin{quote}
-%``Well, I've spent ten years or more dealing with methods for analysing
-%non-linear models, only to find out about variable projection. All that
-%gradient descent and continuous function stuff is gone. Onward and
-%upward, I suppose.''
-%\end{quote}
-%The post does not describe the dark adaptation model, the application,
-%the exhaustive grid search, or any implementation detail, and is believed
-%to be non-enabling: it discloses at most that a well-known numerical
-%method was found useful on unspecified nonlinear modelling work. The
-%attorney should judge whether it has any bearing on novelty. Record of
-%the post, verified against the live page on 14 August 2026: posted from
-%the account @emkayoh.bsky.social on 12 August 2026 at 21:51 UTC, at\\
-%\texttt{\small https://bsky.app/profile/emkayoh.bsky.social/post/3msw4fxqk4s2m};\\
-%at the time of verification it had one like and one repost.
-%
 
-Two protective measures are in place: no public comment on
+One public statement exists and is listed for the attorney's assessment.
+The inventor posted the following comment on the social network Bluesky:
+\begin{quote}
+``Well, I've spent ten years or more dealing with methods for analysing
+non-linear models, only to find out about variable projection. All that
+gradient descent and continuous function stuff is gone. Onward and
+upward, I suppose.''
+\end{quote}
+The post does not describe the dark adaptation model, the application,
+the exhaustive grid search, or any implementation detail, and is believed
+to be non-enabling: it discloses at most that a well-known numerical
+method was found useful on unspecified nonlinear modelling work. The
+attorney should judge whether it has any bearing on novelty. Record of
+the post, verified against the live page on 14 August 2026: posted from
+the account @emkayoh.bsky.social on 12 August 2026 at 21:51 UTC, at\\
+\texttt{\small https://bsky.app/profile/emkayoh.bsky.social/post/3msw4fxqk4s2m};\\
+at the time of verification it had one like and one repost.
+
+Two protective measures are in place: no further public comment on
 fitting methods will be made, in any forum, until a filing decision has
 been taken; and MuMac holds a copy of the University of Manchester IP
 assignment, available for the attorney's file.
@@ -448,9 +526,21 @@ independent, dated validation of the method without costing any rights.
 \appendix
 \section{Full mathematical treatment}
 The full mathematical treatment is maintained as a companion R~Markdown
-document,\\ \texttt{DISC-IP-003-appendix-A.Rmd}, whose numerical
+document, \texttt{DISC-IP-003-appendix-A.Rmd}, whose numerical
 demonstrations are executable and were run at the date shown on the
 document. The knitted PDF is reproduced on the following pages.
+
+For the avoidance of doubt, the search space of the implementation as
+tested is: $\tau$ over 40 points from $0.01$ minutes to a bound set
+slightly above the clinical range and growing gently with the test window;
+$\alpha$ over 80 points from $0.5$ minutes to the end of the test window;
+and the rod slope constrained to $[-0.5, 0]$ log units per minute, with
+fits reaching either bound re-solved exactly under that constraint. The
+five-minute rule on $\alpha$ described in Section~6 is applied as a
+post-fit review flag rather than as a search constraint, so that genuine
+late breaks are estimated rather than excluded. Production configuration
+of the bounds for the Mk3 instrument may differ from the research
+configuration used in the validation experiment.
 \IfFileExists{DISC-IP-003-appendix-A.pdf}{%
   \includepdf[pages=-, pagecommand={\thispagestyle{fancy}}]{DISC-IP-003-appendix-A.pdf}%
 }{%
@@ -463,9 +553,9 @@ included here automatically on the next compile.
 
 \section{Repository commit history}
 Commit history of the private implementation repository, oldest first,
-generated with
-\texttt{git log --reverse --date=iso}
-and reproduced verbatim on 14~August~2026.
+generated with \texttt{git log -{}-reverse -{}-date=iso} and reproduced
+on 19~August~2026. Long commit bodies are abridged to their first line;
+the full log is available on request.
 \begin{small}
 \begin{verbatim}
 2026-08-03 15:29:40 +0100  420e41a  first commit
@@ -482,10 +572,42 @@ and reproduced verbatim on 14~August~2026.
 2026-08-06 12:32:04 +0100  ba96f60  minor alterations to code base in
                                     preparation for the discrimantion
                                     study
+2026-08-14 01:19:25 +0100  18b12ab  Refine profiled least-squares fit
+                                    for P5c model; update references
+2026-08-14 01:19:25 +0100  fb67d37  Add repo plan, resources,
+                                    commit-history export, and gitignore
+2026-08-14 01:21:22 +0100  9cbe804  Remove editor scratch and autosave
+                                    files
+2026-08-15 17:26:18 +0100  bb98999  Checkpoint profiled P5c numerical
+                                    experiment pipeline
+2026-08-16 12:40:45 +0100  48a3a9c  Refine profile-first P5c experiment
+                                    pipeline
+2026-08-16 13:06:19 +0100  ef910d0  Reorganise project documentation and
+                                    remove obsolete files
+2026-08-18 15:38:01 +0100  9ce4a60  new refs added
+2026-08-18 15:38:31 +0100  94b0c5e  new notes added
+2026-08-18 15:40:43 +0100  5bb3cf4  new code updates see headers
+2026-08-18 21:17:08 +0100  012d73e  CLI version that accesses Git
+                                    commit code
 \end{verbatim}
 \end{small}
 Commit messages are reproduced exactly as written, including original
 spellings. Author timestamps are self-recorded; GitHub's server-side
 records can corroborate them if required.
+
+The history corroborates the account given in Section~8. The profiled
+method appears at \texttt{dd5ea31} (6~August~2026), whose message records
+the recognition of the partially linear structure of the model and the
+replacement of a five-dimensional grid search with profiled
+least-squares. The discrimination and inference framework follows the
+same day. The experiment pipeline is consolidated at \texttt{bb98999}
+(15~August~2026) and refined at \texttt{48a3a9c} (16~August~2026), the
+latter recording that gradient refinement is skipped at profile
+boundaries and that provenance is carried with each simulated result.
+The final two commits, \texttt{5bb3cf4} and \texttt{012d73e}
+(18~August~2026), carry the correction to the treatment of fits at the
+slope bounds and the change that records the repository commit with each
+experiment run. The validation experiment reported in Section~8.1 was
+executed under \texttt{012d73e}.
 
 \end{document}
