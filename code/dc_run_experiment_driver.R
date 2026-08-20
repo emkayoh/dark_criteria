@@ -24,10 +24,21 @@ RNGversion("4.3.3")
 # --------------------------------------------------
 # Paths
 # --------------------------------------------------
+# Project root differs by machine; set DC_ROOT in the environment to
+# override. Mac: ~/Dropbox/Mumac_/CODE_1/dark_criteria
+# Titan: ~/dark_criteria
+project_root <- Sys.getenv("DC_ROOT", unset = path.expand("~/dark_criteria"))
 
-code_dir <- "~/Dropbox/Mumac_/CODE_1/dark_criteria/code"
-results_dir <- "~/Dropbox/Mumac_/CODE_1/dark_criteria/results"
+code_dir    <- file.path(project_root, "code")
+results_dir <- file.path(project_root, "results")
 
+if (!dir.exists(code_dir)) {
+    stop("code_dir not found: ", code_dir,
+         " (set DC_ROOT to the project root)")
+}
+if (!dir.exists(results_dir)) {
+    dir.create(results_dir, recursive = TRUE)
+}
 
 # --------------------------------------------------
 # Source code
