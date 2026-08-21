@@ -14,3 +14,5 @@ code/sandpit/
 *.aux
 *.log
 *.synctex.gz
+.RData
+.Rapp.history

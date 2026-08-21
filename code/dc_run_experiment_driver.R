@@ -124,6 +124,10 @@ run_stamp <- format(Sys.time(), "%Y-%m-%d_%H%M%S")
 
 results_file <- file.path(results_dir, sprintf("dc_experiment_results_tau%s_%s_pid%d.csv", paste(format(tau_fixed), collapse = "-"), 
 	run_stamp, Sys.getpid()))
+	
+source(file.path(code_dir, "dc_envCap.R"))
+envCap(dir = results_dir, code_dir = code_dir,
+       notes = sprintf("tau = %s", format(tau_fixed)))
 
 # Should never trigger with seconds + PID in the name; if it ever does,
 # something is wrong that you want to know about.
