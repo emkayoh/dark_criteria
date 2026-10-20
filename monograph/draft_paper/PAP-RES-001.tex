@@ -1,0 +1,549 @@
+% PAP-RES-001  (JMFK)
+% Variable projection fitting of dark adaptation recovery curves:
+% method and numerical validation.
+% Compile with: xelatex -> bibtex -> xelatex -> xelatex
+% Requires varpro.bib alongside this file.
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=25mm]{geometry}
+\usepackage{fontspec}
+\IfFontExistsTF{Helvetica Neue}
+  {\setmainfont{Helvetica Neue}}
+  {\relax} % fall back to the default font if Helvetica Neue is absent
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage[framemethod=tikz]{mdframed}
+\usepackage{enumitem}
+\usepackage{natbib}
+\bibliographystyle{unsrtnat}
+\usepackage[hidelinks]{hyperref}
+
+% ---- colours, matching DISC-IP-003 ----
+\definecolor{coneC}{HTML}{D85A30}
+\definecolor{rodC}{HTML}{534AB7}
+\definecolor{tealC}{HTML}{0F6E56}
+\definecolor{grayC}{HTML}{5F5E5A}
+
+% ---- document identity ----
+\newcommand{\docid}{PAP-RES-001}
+\newcommand{\docversion}{v0.1 skeleton}
+\newcommand{\docdate}{27 August 2026}
+
+% ---- headers and footers ----
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small MuMac Ltd}
+\fancyhead[R]{\small \docid\ \docversion}
+\fancyfoot[L]{\footnotesize Draft manuscript. Not for circulation.}
+\fancyfoot[R]{\small Page \thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% ---- placeholder boxes ----
+\newmdenv[linecolor=coneC, linewidth=1pt, roundcorner=4pt,
+  backgroundcolor=coneC!6, frametitle={To write},
+  frametitlefont=\small\bfseries]{towrite}
+\newmdenv[linecolor=tealC, linewidth=1pt, roundcorner=4pt,
+  backgroundcolor=tealC!6, frametitle={Evidence in hand},
+  frametitlefont=\small\bfseries]{evidence}
+\newmdenv[linecolor=rodC, linewidth=1pt, roundcorner=4pt,
+  backgroundcolor=rodC!6, frametitle={Open question},
+  frametitlefont=\small\bfseries]{openq}
+
+% ---- inline placeholder for a number not yet extracted ----
+\newcommand{\FILL}[1]{\textbf{\textcolor{coneC}{[#1]}}}
+
+% ---- model shorthand ----
+\newcommand{\Sii}{S_2}
+
+\begin{document}
+
+% ================= title block =================
+\begin{center}
+{\LARGE Variable projection fitting of dark\\adaptation recovery curves}\\[3mm]
+{\large Method, and numerical validation across\\192,000 simulated recoveries}\\[6mm]
+J.\,M.\,F.~Kelly\\
+\small MuMac Ltd, Manchester, United Kingdom\\[6mm]
+\begin{tabular}{ll}
+\toprule
+Document ID & \docid \\
+Version & \docversion \\
+Date & \docdate \\
+Author & JMFK \\
+Status & Skeleton for drafting \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\vspace{3mm}
+\noindent\textbf{Version history}
+
+\noindent\begin{tabular}{llll}
+\toprule
+Version & Date & Author & Change \\
+\midrule
+v0.1 & \docdate & JMFK & Section skeleton and result placeholders \\
+\bottomrule
+\end{tabular}
+
+\vspace{6mm}
+
+% ================= abstract =================
+\section*{Abstract}
+\begin{towrite}
+Write last. Structure: rod-mediated dark adaptation is an early functional
+biomarker of AMD, but the incumbent endpoint (rod intercept time) is
+censored whenever recovery outruns the test window, and the parameter-level
+alternative has been considered unusable on grounds of fitting instability.
+We show the recovery model is separable, give an exhaustive profiled fit
+with bounded deterministic cost, and validate it over 192,000 simulated
+recoveries. State the four headline results: gradient descent contributes
+nothing measurable; the interval-based detection rule is robust where the
+model-comparison rule fails; the detection threshold collapses to
+$|\Sii|_{90} \approx 0.55\sigma$ per minute; and fits agree to $10^{-14}$
+across two unrelated hardware platforms. Target 200 words.
+\end{towrite}
+
+% ================= 1 =================
+\section{Introduction}
+
+\subsection{Rod intercept time and its censoring problem}
+\begin{towrite}
+RIT as the incumbent clinical endpoint \citep{Jackson:2014aa,Owsley:2016aa}.
+Why it is attractive: single number, monotone, clinically interpretable.
+Why it is limited: it is an observation of when a curve crosses a criterion,
+so a recovery slower than the test window yields no value at all. The field's
+responses have been to extend the test, shorten it and predict
+\citep{Jackson:2008aa,DeSilva:2019aa}, or to treat the missing values as
+censored and apply survival methods \citep{Higgins:2018aa}.
+\end{towrite}
+
+\subsection{Why parameter-level estimation has been avoided}
+\begin{towrite}
+The rod slope $\Sii$ is the quantity the clinician actually wants: a rate,
+not a crossing time, and defined whether or not the criterion is reached
+within the window. The obstacle is that recovering it requires fitting a
+segmented nonlinear model, and the received view is that such fits are
+unstable, initialisation-dependent and not reproducible. That view is
+correct about the optimisers usually applied and wrong about the model.
+\end{towrite}
+
+\subsection{Contribution}
+\begin{enumerate}[nosep]
+\item The recovery model is separable: with the two nonlinear parameters
+  held, the remaining three solve in closed form.
+\item An exhaustive search over the two-dimensional nonlinear space then
+  gives a fit with bounded, predictable cost, no dependence on starting
+  values, and no differentiation of the breakpoint.
+\item A validation of 192,000 replications establishing what the method
+  does and does not deliver, including the detection threshold as a single
+  scaling law and a demonstration of bit-level cross-platform agreement.
+\end{enumerate}
+
+% ================= 2 =================
+\section{The recovery model}
+
+\subsection{Functional form}
+The five-parameter cone-plus-rod model, referred to here as P5c, is
+\begin{equation}
+\label{eq:p5c}
+y(t) \;=\; ct \;+\; cc\,e^{-t/\tau} \;+\; \Sii\,\max(t-\alpha,\,0),
+\end{equation}
+with $ct$ the cone threshold asymptote, $cc$ the cone coefficient, $\tau$
+the cone time constant, $\Sii$ the rod slope and $\alpha$ the rod-cone break.
+
+\begin{towrite}
+Physiological reading of each parameter. State that $\Sii$ is the diagnostic
+parameter and everything else is, for present purposes, nuisance structure
+that must nevertheless be estimated well enough not to contaminate it.
+\end{towrite}
+
+\subsection{The transition function}
+\begin{towrite}
+Equation~\eqref{eq:p5c} uses a hinge. Earlier work, including the granted
+patent \citep{Kelly:2020aa}, used a logistic transition $Tr(\cdot)$.
+Justify the hinge: the smooth transition was introduced to make the model
+differentiable for gradient-based fitting, and once the fit no longer
+differentiates with respect to the breakpoint that motivation disappears.
+State what is lost, and whether the two forms are distinguishable at
+clinical noise. \FILL{decide whether this needs its own small experiment}
+\end{towrite}
+
+\subsection{The cone-only null model}
+\begin{towrite}
+P3: $y(t) = ct + cc\,e^{-t/\tau}$. Needed for the model-comparison detection
+rule assessed in section~\ref{sec:rule}.
+\end{towrite}
+
+% ================= 3 =================
+\section{Method}
+
+\subsection{Separability}
+Hold $\tau$ and $\alpha$ fixed. Equation~\eqref{eq:p5c} is then linear in
+$ct$, $cc$ and $\Sii$, with design matrix
+\begin{equation}
+X(\tau,\alpha) \;=\;
+\begin{bmatrix}
+1 & e^{-t_1/\tau} & \max(t_1-\alpha,0)\\
+\vdots & \vdots & \vdots\\
+1 & e^{-t_n/\tau} & \max(t_n-\alpha,0)
+\end{bmatrix},
+\end{equation}
+so the conditional least-squares solution is obtained directly by QR
+decomposition and the objective reduces to a function of $(\tau,\alpha)$
+alone.
+
+\begin{towrite}
+State this as variable projection \citep{Golub:1973aa,Golub:2003aa} and note
+the specific consequence for this model: the parameter that the literature
+treats as the hard one, the breakpoint, never needs to be differentiated.
+\end{towrite}
+
+\subsection{Exhaustive grid over the nonlinear pair}
+\begin{towrite}
+Grid specification, bounds and step sizes for $\tau$ and $\alpha$. Cost is
+$n_\tau \times n_\alpha$ QR solves, known before the fit begins. Note the
+relationship to grid search for segmented regression
+\citep{Hudson:1966aa,Lerman:1980aa}, and what is new here: the segmented
+term is one component of a model that is also nonlinear elsewhere.
+\end{towrite}
+
+\begin{table}[h]
+\centering
+\caption{Search grid and bounds. \FILL{fill from dc\_run\_experiment\_driver.R}}
+\begin{tabular}{lrrr}
+\toprule
+Parameter & Lower & Upper & Step \\
+\midrule
+$\tau$ (min) & \FILL{} & \FILL{} & \FILL{} \\
+$\alpha$ (min) & \FILL{} & \FILL{} & \FILL{} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Bound handling and the constrained re-solve}
+\begin{towrite}
+$\Sii$ is constrained to be non-positive on physiological grounds. When the
+unconstrained conditional solution violates that, the exact constrained
+solution is obtained by re-solving with the rod column dropped rather than
+by clamping. State why clamping is wrong: it leaves $ct$ and $cc$ at values
+optimal for a different model.
+\end{towrite}
+
+\subsection{Local refinement}
+\begin{towrite}
+Optional Nelder-Mead polish within the winning cell, and the gradient
+descent stage that the validation subsequently shows to be redundant
+(section~\ref{sec:gd}). Both are described here as implemented, and
+adjudicated in results.
+\end{towrite}
+
+\subsection{Intervals}
+\begin{towrite}
+Delta-method intervals on $\Sii$ and $\alpha$, and the propagated interval
+on predicted RIT. Note honestly that this remains conceptually close to the
+approach of \citet{Kelly:2020aa}.
+\end{towrite}
+
+% ================= 4 =================
+\section{Related work}
+\begin{towrite}
+Four threads, one paragraph each.
+\begin{enumerate}[nosep]
+\item Separable least squares \citep{Golub:1973aa,Golub:2003aa}.
+\item Segmented regression by grid search
+  \citep{Hudson:1966aa,Lerman:1980aa}, and the known asymmetry between
+  coefficient and change-point interval coverage \citep{Kim:2008aa}, which
+  section~\ref{sec:ci} reproduces.
+\item Alternative recovery models, in particular the softplus form of
+  \citet{Dimitrov:2008aa}, $T(t) = T_f + \log_{10}(10^{T_i - Rt} + 1)$,
+  which is partially separable but not usefully so. \FILL{decide whether to
+  fit it as a comparator or discuss only}
+\item Clinical dark adaptometry and the RIT literature
+  \citep{Jackson:2008aa,Jackson:2014aa,Owsley:2016aa,DeSilva:2019aa,Higgins:2018aa}.
+\end{enumerate}
+\end{towrite}
+
+% ================= 5 =================
+\section{Validation design}
+
+\subsection{Generative model and factor levels}
+\begin{towrite}
+Curves simulated from equation~\eqref{eq:p5c} with additive Gaussian noise
+on threshold. Fully crossed design over four cone time constants, six noise
+levels and a range of rod slopes and break times, replicated to 192,000
+runs in total.
+\end{towrite}
+
+\begin{table}[h]
+\centering
+\caption{Simulation factors. \FILL{fill exact level sets and replication count per cell}}
+\begin{tabular}{lll}
+\toprule
+Factor & Levels & Note \\
+\midrule
+$\tau$ (min) & 0.6, 1.2, 1.8, 2.4 & 2.4 is a stress test; see section~\ref{sec:limits} \\
+Noise $\sigma$ (log units) & \FILL{} & includes 0.05, 0.1, 0.3 \\
+$\Sii$ (log units/min) & \FILL{} & spans shallow to steep \\
+$\alpha$ (min) & \FILL{} & \\
+Replications per cell & \FILL{} & 192,000 total \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Reproducibility apparatus}
+\begin{evidence}
+Each result row carries its seed, the git commit of the fitting code, and a
+captured environment record (platform, BLAS, R version, RNG version, git
+state). The driver refuses to run against a dirty working tree. Output files
+are named by PID, $\tau$ set and timestamp so concurrent runs cannot collide.
+\end{evidence}
+
+\subsection{Platforms}
+\begin{evidence}
+Two unrelated platforms: an Apple silicon Mac (arm64, Accelerate/vecLib
+BLAS, R 4.5.2) and an UltraRISC UR-DP1000 RISC-V board (Ubuntu, reference
+BLAS, R 4.3.3). \texttt{RNGversion("4.3.3")} was pinned on both and the
+generated streams verified bit-identical via
+\texttt{sprintf("\%a", rnorm(5))}, so any divergence in results is
+attributable to arithmetic and not to the random numbers.
+\end{evidence}
+
+% ================= 6 =================
+\section{Results}
+
+\subsection{Gradient descent contributes nothing measurable}
+\label{sec:gd}
+\begin{evidence}
+Median RSS improvement zero at all realistic noise levels. The optimiser
+reports \texttt{no\_improving\_step} in 21 to 53\% of runs, consistent with
+it being handed a point that is already stationary. Paired truth-error
+comparison shows \FILL{alpha\_gain, S2\_gain medians and the fraction of
+runs where GD is nearer truth; near 0.5 is a coin flip}.
+\end{evidence}
+\begin{towrite}
+Frame as: the exhaustive grid is sufficient. This is the strongest form of
+the robustness argument, because it removes the stage on which
+initialisation dependence would otherwise rest.
+\end{towrite}
+
+\subsection{Nelder-Mead refinement is a real but small polish}
+\begin{evidence}
+Median RSS improvement 0.02 to 0.4\%. \FILL{effect on truth error, and the
+$\tau$ and noise dependence}.
+\end{evidence}
+
+\subsection{Detection rule: intervals against model comparison}
+\label{sec:rule}
+\begin{evidence}
+The AICc ceiling degrades monotonically in both noise and $\tau$: at noise
+0.3 it falls 0.958, 0.887, 0.779, 0.698 across $\tau$ 0.6, 1.2, 1.8, 2.4,
+with failures beginning inside the physiological range at $\tau$ 1.8. The
+interval rule never falls below 0.988 across 24 cells, its 90\% thresholds
+move by at most 0.015 log units/min over a fourfold range of $\tau$, and its
+false-positive rate stays between 1 and 6\%. At $\tau$ 0.6 AICc is the better
+detector (threshold 0.0125 against 0.022 at noise 0.05); by $\tau$ 1.8 it has
+lost, and at $\tau$ 2.4 it does not reach 90\% anywhere above noise 0.1.
+\end{evidence}
+\begin{towrite}
+The mechanism: a slow cone tail extends through the break region, the
+exponential in P3 absorbs rod-branch curvature, and $\Delta$AICc starves.
+The headline is the inversion. The model-comparison rule fails preferentially
+on patients with slowed cone recovery, which is itself an early-AMD feature,
+so it fails hardest on exactly the population the instrument exists to find.
+That is why the interval rule ships, and the argument is robustness rather
+than average performance.
+\end{towrite}
+
+\begin{table}[h]
+\centering
+\caption{Detection ceiling by rule, cone time constant and noise.}
+\begin{tabular}{lrrrr}
+\toprule
+& \multicolumn{4}{c}{$\tau$ (min)} \\
+\cmidrule(l){2-5}
+Rule and noise & 0.6 & 1.2 & 1.8 & 2.4 \\
+\midrule
+AICc, $\sigma=0.3$ & 0.958 & 0.887 & 0.779 & 0.698 \\
+Interval, $\sigma=0.3$ & \FILL{} & \FILL{} & \FILL{} & \FILL{} \\
+\FILL{add remaining noise levels} & & & & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{The detection threshold is a scaling law}
+\begin{evidence}
+Across all four cone sets, $|\Sii|_{90}/\sigma$ lies between 0.53 and 0.57
+per minute at every noise level from 0.1 upward. The detectable slope is
+approximately $0.55\sigma$ per minute and is essentially independent of
+$\tau$.
+\end{evidence}
+\begin{towrite}
+Convert to the clinical statement: at instrument noise of 0.1 log units, rod
+slopes of 0.055 log units/min are detected nine times in ten at 3 to 5\%
+false positives. Note that a twenty-cell table reduces to one number, and
+that this is what makes the threshold quotable in a protocol.
+\end{towrite}
+
+\subsection{Interval calibration}
+\label{sec:ci}
+\begin{evidence}
+Coverage of the $\Sii$ interval sits at \FILL{} against a nominal 0.95;
+coverage of the $\alpha$ interval sits at \FILL{}. The asymmetry is the one
+\citet{Kim:2008aa} report by simulation for segmented line regression.
+\end{evidence}
+\begin{towrite}
+Present as a predicted result confirmed, not as a surprise. It validates the
+interval machinery for the parameter the detection rule uses, and warns
+against quoting a break-time interval at face value.
+\end{towrite}
+
+\subsection{Degenerate fits are made visible, not eliminated}
+\begin{evidence}
+8.0\% of fits terminate at the $\tau$ bound with $cc$ running to order
+$10^{13}$, in simulated data with a known, well-defined $\tau$. The
+degeneracy is a property of the model plus noise, not of the optimiser.
+\FILL{breakdown by $\tau$ set and noise level}.
+\end{evidence}
+\begin{towrite}
+The claim to make, and the one not to. What the exhaustive search delivers
+is that the degenerate solution is known to be the global optimum rather
+than a local trap, that the boundary condition is detected and flagged
+deterministically instead of being returned silently as an excellent fit,
+and that the same input always yields the same verdict. Do not write that
+the method solves the $cc$/$\tau$ instability. It does not, and the data
+above say so.
+\end{towrite}
+
+\subsection{Cross-platform agreement}
+\begin{evidence}
+Of 191,996 paired comparisons, 76.5\% of fits are bit-identical, 99\% agree
+to $1\times10^{-14}$ in RSS, and the boundary classification disagrees in 1
+comparison. All divergence traces to the Nelder-Mead accept test in cases
+where the candidate improvement is at rounding level, and concentrates at
+$\tau = 2.4$ (disagreement counts 1, 1, 1, 53 across the four sets).
+\end{evidence}
+\begin{towrite}
+Why this matters for a regulated instrument: the fit is not merely
+repeatable on one machine but reproducible across architectures and BLAS
+implementations, which is the property a verification protocol needs. Note
+that the one divergence is in the refinement stage, not the grid, so the
+determinism claim attaches to the part of the method that does the work.
+\end{towrite}
+
+\subsection{RIT error and its propagation}
+\begin{evidence}
+Predicted RIT with propagated interval, compared against RIT computed from
+the true parameters, by $\tau$ set. Medians are under a minute while 90th
+percentiles reach 19 to 83 minutes: the $\Sii^{-4}$ tail. At
+$\Sii = -0.05$ the propagated interval is approximately 5.5 min.
+\end{evidence}
+\begin{towrite}
+The honest framing of the survival-analysis question. The method yields an
+estimate with a stated interval where the observation would otherwise be
+censored, which is an alternative to survival methods
+\citep{Higgins:2018aa}. It does not eliminate the problem, it replaces
+censoring with wide extrapolation, and it does not address their claim,
+which is about statistical power in group comparisons. That is testable by
+comparing required sample sizes, and should be offered as such.
+\end{towrite}
+
+\subsection{Sampling density}
+\begin{evidence}
+Thinning from 4/min to 2/min, 1/min and 0.5/min, method held constant.
+Moving to 1/min, the AdaptDx density, costs roughly a factor of four in the
+shallowest detectable slope, and halving again breaks detection at that
+noise level. False positives stay between 0.3 and 2.5\% at every density and
+noise level with no systematic trend. RIT error at 1/min is a median of
+0.32 min at noise 0.1 and 0.89 min at noise 0.3.
+\end{evidence}
+\begin{towrite}
+Two conclusions. First, the continuous ramp is not a convenience, it is
+doing measurable diagnostic work, and the rule degrades by losing
+sensitivity rather than by inventing rod phases, which is the right failure
+direction for a screening instrument. Second, at matched density the RIT
+error is two orders of magnitude below the 19.1~$\pm$~18.6 min of
+\citet{DeSilva:2019aa}, so sampling density does not explain that
+comparator's performance. See section~\ref{sec:limits} for the qualification
+this needs.
+\end{towrite}
+
+% ================= 7 =================
+\section{Discussion}
+\begin{towrite}
+Assemble in this order.
+\begin{enumerate}[nosep]
+\item The obstacle to parameter-level dark adaptometry was the fit, and the
+  fit was harder than it needed to be because the model was treated as
+  wholly nonlinear.
+\item With separability exploited, the fit is deterministic, bounded in
+  cost, free of starting values, and reproducible across architectures.
+\item The parameters are therefore usable, so the sidestep to a crossing
+  time is no longer forced.
+\item The detection threshold is a single scaling law, which makes the
+  instrument's noise specification and its clinical sensitivity two views of
+  the same number.
+\item The rule that ships is chosen for robustness on the population of
+  clinical interest, not for average performance.
+\end{enumerate}
+Decide before drafting which sense of ``superior'' the paper commits to,
+since that choice determines how much of this section exists.
+\end{towrite}
+
+% ================= 8 =================
+\section{Limitations}
+\label{sec:limits}
+\begin{openq}
+Was the $\tau$ search grid extended beyond 2.0 for the $\tau = 2.4$ set? If
+it was not, every fit in that set is boundary-biased in $\tau$ and part of
+the AICc collapse there is a grid-capping artefact. The trend is established
+within bounds at $\tau = 1.8$ and so survives either way, but the $\tau=2.4$
+magnitudes depend on the answer. If the grid was capped, describe that set
+as a stress test beyond the operational bound.
+\end{openq}
+
+\begin{openq}
+The \citet{DeSilva:2019aa} comparison is not like for like. Their figure is
+for prediction of the later curve from data prior to $-2$~LU; ours is
+estimation from the whole curve. Either state the difference explicitly or
+run the prediction version, truncating the simulated curves at $-2$~LU and
+recomputing RIT error, which would make the comparison exact rather than
+indicative.
+\end{openq}
+
+\begin{towrite}
+Remaining limitations: simulation uses the same generative model as the fit,
+so model misspecification is untested; noise is additive Gaussian on
+threshold, and real thresholds are quantised by the staircase; no clinical
+data appears in this paper.
+\end{towrite}
+
+% ================= 9 =================
+\section{Conclusion}
+\begin{towrite}
+Three sentences. Separability makes the fit deterministic and cheap; the
+validation quantifies exactly what that buys and what it does not; the rod
+slope is a usable clinical parameter with a stated detection threshold.
+\end{towrite}
+
+% ================= back matter =================
+\section*{Data and code availability}
+\begin{towrite}
+State the analysis scripts by name (\texttt{dc\_findInitialParametersProfiled.R},
+\texttt{make\_result\_row.R}, \texttt{dc\_analysis.R},
+\texttt{dc\_run\_experiment\_driver.R}, \texttt{dc\_envCap.R},
+\texttt{dc\_platform\_compare.R}, \texttt{dc\_sparse\_study.R},
+\texttt{dc\_rit\_error\_figure.R}) and the commit against which the reported
+results were produced. Decide what is released and what is withheld given
+the pending disclosure.
+\end{towrite}
+
+\section*{Competing interests}
+\begin{towrite}
+JMFK is a director and shareholder of MuMac Ltd and an inventor on
+\citet{Kelly:2020aa}. Declare the pending disclosure.
+\end{towrite}
+
+\bibliography{varpro}
+
+\end{document}

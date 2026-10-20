@@ -1,0 +1,17 @@
+Here it is properly, and with one refinement I glossed over before.
+
+**The algebra.** $\mathrm{RIT} = (\mathrm{crit} - ct)/S2 + \alpha$, so
+
+$$\frac{\partial \mathrm{RIT}}{\partial S2} = -\frac{\mathrm{crit}-ct}{S2^{2}}, \qquad \text{contribution to } \operatorname{Var}(\mathrm{RIT}) = \frac{(\mathrm{crit}-ct)^{2}}{S2^{4}}\operatorname{Var}(S2).$$
+
+Fourth power in the **variance**, second power in the standard deviation. So halving the slope multiplies the variance contribution sixteenfold and the interval width fourfold. I've been saying "sixteenfold" without specifying which, and that needs stating precisely in print.
+
+**The numbers**, with $\mathrm{crit} = -3$, $ct = -1.7$, $\alpha = 5$, and $\mathrm{SD}(S2) \approx 0.0105$ from your dense-sampling results at noise 0.1:
+
+At $S2 = -0.30$, RIT is 9.3 min with an uncertainty of 0.15 min. At $S2 = -0.10$, RIT is 18.0 min with an uncertainty of 1.37 min. At $S2 = -0.05$, 31.0 min ± 5.5. At $S2 = -0.01$, 135 min ± 137. The sensitivity coefficient $\partial\mathrm{RIT}/\partial S2$ runs from 14 to 13,000 across the range.
+
+**The refinement, and it matters.** The relative uncertainty does *not* explode: for shallow slopes it converges to $\mathrm{SD}(S2)/|S2|$, exactly the relative uncertainty of the slope itself, as the two rightmost columns show. That's because RIT and its error both scale as $1/S2$. So the honest statement is that **absolute** uncertainty in minutes blows up while relative uncertainty merely tracks that of $S2$.
+
+Which strengthens rather than weakens the clinical argument, because RIT is used absolutely, against fixed cut-offs in minutes. A measure whose error is 0.15 min at a healthy slope and 5.5 min at a shallow one cannot support a fixed threshold across that range. And there's a second consequence: at $S2 = -0.05$ the expected RIT is 31 minutes, beyond any practical test window, so the value is censored rather than measured, which is precisely the problem Tahir et al. addressed with time-to-event methods.
+
+A reviewer will spot the relative-versus-absolute distinction, so state it yourself and then explain why absolute is the clinically relevant one.

@@ -26,19 +26,21 @@
 \usepackage[framemethod=tikz]{mdframed}
 \usepackage{pdfpages}
 \usepackage{enumitem}
+\usepackage{natbib} % Loads the natbib package
 
-% ---- figure colour definitions (required by all three figures) ----
+
+% -- figure colour definitions (required by all three figures) --
 \definecolor{coneC}{HTML}{D85A30}
 \definecolor{rodC}{HTML}{534AB7}
 \definecolor{tealC}{HTML}{0F6E56}
 \definecolor{grayC}{HTML}{5F5E5A}
 
-% ---- document identity ----
+% -- document identity --
 \newcommand{\docid}{DISC-IP-003}
-\newcommand{\docversion}{v0.4 draft}
-\newcommand{\docdate}{19 August 2026}
+\newcommand{\docversion}{v0.6 draft}
+\newcommand{\docdate}{21 August 2026}
 
-% ---- headers and footers ----
+% -- headers and footers --
 \pagestyle{fancy}
 \fancyhf{}
 \fancyhead[L]{\small MuMac Ltd}
@@ -48,10 +50,12 @@
 \fancyfoot[R]{\small Page \thepage}
 \renewcommand{\headrulewidth}{0.4pt}
 
-% ---- placeholder box for content to be completed ----
+% -- placeholder box for content to be completed --
 \newmdenv[linecolor=coneC, linewidth=1pt, roundcorner=4pt,
   backgroundcolor=coneC!6, frametitle={To complete before submission},
   frametitlefont=\small\bfseries]{todo}
+  
+  
 
 \begin{document}
 
@@ -87,14 +91,21 @@ v0.3 & 14 August 2026 & JMFK & Market context (WP); Appendix A\\
 v0.4 & 19 August 2026 & JMFK & Validation experiment completed;\\
      &                &      & alpha flag reworded; grid spec\\
      &                &      & aligned to implementation \\
+v0.5 & 21 August 2026 & JMFK & Cross-platform determinism\\
+     &                &      & confirmed on RISC-V; Appendix~A\\
+     &                &      & determinism section evidenced \\
+v0.6 & 21 August 2026 & JMFK & Inventor's granted patent added as\\
+     &                &      & prior art with distinguishing\\
+     &                &      & discussion; early-termination claim\\
+     &                &      & withdrawn and attributed \\
 \bottomrule
 \end{tabular}
 
 \vspace{6mm}
 \section{Document purpose and scope}
-This document discloses a method for fitting dark adaptation recovery
-curves, as implemented in the RapiDA dark adaptometer, for the purpose of
-seeking advice on patentability. It is intended for MuMac's patent attorney
+This document describes a method for fitting dark adaptation recovery
+curves, as implemented in the RapiDA dark adaptometer, and will be used to 
+seek advice on patentability. It is intended for MuMac's patent attorney
 and, in abridged form, for the MuMac board. This document and its contents
 are confidential.
 
@@ -103,7 +114,7 @@ Dark adaptation, the recovery of visual sensitivity after exposure to a
 bright light, is a functional biomarker for age-related macular
 degeneration (AMD). Rod-mediated recovery is measurably delayed in early
 AMD, often before structural changes are visible, which makes the shape of
-the recovery curve clinically valuable for early detection.
+the recovery curve clinically valuable for early detection \cite{Jackson:2014aa}.
 
 The RapiDA dark adaptometer measures this recovery. The participant is
 exposed to a controlled bleach and their detection threshold is then
@@ -129,20 +140,20 @@ where:
 \item $\tau$ is the cone time constant;
 \item $S2$ is the slope of the second (rod-mediated) component of
   recovery;
-\item $\alpha$ is the rod--cone break, the time at which rod recovery
+\item $\alpha$ is the rod-cone break, the time at which rod recovery
   begins;
 \item $H(t-\alpha)$ is the Heaviside step function, equal to $0$ for
   $t < \alpha$ and $1$ for $t \geq \alpha$.
 \end{itemize}
 The term $(t-\alpha)H(t-\alpha)$ is therefore a ramp: it is zero before
-the rod--cone break and changes linearly with slope $S2$ after it.
+the rod-cone break and changes linearly with slope $S2$ after it.
 Figure~\ref{fig:model} shows the model and its components.
 
 \begin{figure}[ht]
 \centering
 \input{fig1-model-curve}
 \caption{The dark adaptation model. The cone branch (orange) decays with
-time constant $\tau$ towards the cone threshold $ct$; at the rod--cone
+time constant $\tau$ towards the cone threshold $ct$; at the rod-cone
 break $\alpha$ the rod branch (purple) begins, changing with slope $S2$.
 Parameter values are illustrative.}
 \label{fig:model}
@@ -251,11 +262,53 @@ deterministic and reproducible. Shading is illustrative.}
 Known prior art, stated for completeness:
 \begin{itemize}[nosep]
 \item Variable projection as a general numerical method: Golub and
-  Pereyra (1973) and the subsequent literature.
+  Pereyra, described in 1973 \cite{Golub:1973aa}  and the subsequent literature.
 \item The dark adaptation model of Equation~\eqref{eq:model} and its
-  variants, established in the visual science literature.
-\item Existing dark adaptometers and their published fitting approaches.
+  variants, established in the visual science literature \cite{Lamb:2004aa}.
+\item Existing dark adaptometers and their published fitting approaches \cite{Jackson:2008ab}.
+\item \textbf{The inventor's own granted patent}, ``A method and apparatus
+  for measuring a property of an eye'', US~2020/0221945~A1 (application
+  16/629,292; PCT/GB2018/051938; priority GB~1710991.9, 7~July~2017),
+  applicant The University of Manchester, inventor J.M.F.~Kelly; granted
+  and maintained in the United States, Europe, and Asia, and since
+  assigned to MuMac Ltd. This is the closest prior art and is discussed
+  below.
 \end{itemize}
+
+\subsection*{Relationship to the inventor's granted patent}
+The granted patent claims a computer-implemented method of receiving
+threshold data, fitting a cone-only model and a cone-plus-rod model,
+determining a level of confidence associated with each fit, iteratively repeating
+receipt of responses and fitting dependant upon that confidence, and reporting a
+parameter indicative of dark adaptation. Its claims specify
+model forms in which the transition between phases is represented by a
+smooth transition function $Tr(\cdot)$, given as a logistic. The
+purpose of that substitution is that smooth functions permit
+differentiation, so that analytic methods may be used to determine
+confidence intervals in place of computationally intensive bootstrapping.
+
+The present method proceeds from the opposite premise. It does not smooth
+the transition: the Heaviside step is used throughout, in both the model
+and the design matrix. Instead, the model's \textbf{partially linear structure is
+exploited} so that three parameters are obtained in closed form, and the
+two nonlinear parameters are searched over an exhaustive grid. The
+non-differentiable breakpoint is therefore never differentiated during
+fitting, and no gradient of the full model is taken at any stage. The
+validation experiment reported in Section~8.1 shows that adding a
+gradient stage to this method contributes nothing measurable.
+
+The two inventions accordingly differ in mechanism and in premise. The
+granted patent alters the model so that a gradient-based search becomes
+tractable; the present method leaves the model intact and removes the need
+for a gradient-based search altogether.
+
+For completeness, the calculation of confidence intervals in the present
+implementation remains conceptually close to that of the granted patent:
+intervals are obtained by the delta method from a Jacobian evaluated at
+the fitted parameters. The Jacobian uses the true Heaviside step, taking
+the right-continuous one-sided derivative for the break-time column, and
+no smoothing is applied. The attorney's attention is drawn to this
+similarity.
 
 MuMac does not claim novelty in the variable projection method itself, nor
 in the dark adaptation model. The asserted novelty lies in the
@@ -283,21 +336,30 @@ adaptation model within a clinical dark adaptometer. Specifically:
 The method will be implemented in the forthcoming RapiDA Mk3 instrument,
 where it replaces the gradient descent fit of the current models. The
 method has no built-in adaptive mechanism: its real-time output is a
-predictive model of the participant's recovery, and the operator may
-curtail the test once satisfied with the quality of the responses. The
-fit therefore shortens testing through informed operator judgement rather
-than automatic control.
-Whether an application of a known numerical method to a new technical
-purpose is patentable is a question for the attorney; the technical
-effects of the application (real-time in-test fitting with bounded,
-known-in-advance cost, deterministic tuning-free clinical output, and
-operator-informed test curtailment) should be central to that assessment.
+predictive model of the participant's recovery. Note that terminating a
+test once the confidence associated with the fit is sufficient is claimed
+by the inventor's granted patent (claim~3) and is \emph{not} asserted as
+novel here; the present method supplies the fitted parameters and their
+intervals more cheaply and reproducibly, but the use made of them during
+a test is prior art.
+
+\subsection*{Is an application of a known numerical method to a new technical
+purpose is patentable?}
+The technical effects of the application, the following are central to the assessment 
+\begin{itemize}
+\item real-time in-test fitting
+\item  bounded, known-in-advance computational cost
+\item deterministic, tuning-free clinical output, same input data yields the same output parameters
+\end{itemize}
 
 The grid bounds are clinically derived. Operational experience shows that
-the cone time constant $\tau$ is always below two minutes. The range of
-the rod--cone break $\alpha$ is contingent on the flash intensity used by
-the test protocol. A fitted $\alpha$ beyond five minutes prompts review
-rather than acceptance: with a verified bleach it is consistent with
+the cone time constant $\tau$ is usually below two minutes. The grid is
+bounded a little above that range, at the natural logarithm of the test
+duration in minutes (approximately $2.7$ minutes for a fifteen-minute
+test), so that atypical eyes remain inside the search rather than being
+clipped at its edge; the bound grows gently with the duration of the
+test. The value of the rod-cone break $\alpha$ is contingent on the flash intensity used by
+the test protocol. The grid of values uses a range of $0.5$min through to the extent of the measuremnt. A fitted $\alpha$ beyond five minutes prompts review rather than acceptance: with a verified bleach it is consistent with
 delayed rod-mediated recovery, itself an indicator of early AMD; without
 one it indicates that the subject received a flash below the intensity
 required for rate-limited recovery of rod photoreceptor function. The
@@ -323,10 +385,12 @@ happened to find.
   can be stated and verified in regulatory submissions.
 \item \textbf{No operator tuning.} The method has no per-patient solver
   settings, supporting use by non-specialist operators.
-\item \textbf{Shorter tests.} The real-time predictive model lets the
-  operator curtail the test once the responses are of sufficient quality,
-  reducing test duration for the participant without loss of fitted
-  parameters.
+\item \textbf{Supports existing early-termination practice.} Terminating
+  a test once the fit is sufficiently well determined is claimed by the
+  inventor's granted patent and is not an advantage asserted for the
+  present method. The method does, however, supply the parameters and
+  intervals on which that practice depends at lower and bounded
+  computational cost.
 \end{itemize}
 
 \paragraph{Market context.}
@@ -337,7 +401,7 @@ and the burden is expected to increase as populations age. The patient
 population is very large: an estimated 196 million people were living
 with AMD in 2020, projected to rise to 288 million by 2040. Early disease
 represents the majority of cases, with meta-analysis estimates putting
-early AMD prevalence at approximately 8\% in people aged 45--85, against
+early AMD prevalence at approximately 8\% in people aged 45-85, against
 0.4\% for late AMD. This creates a substantial opportunity for earlier
 diagnosis, monitoring, and intervention.
 
@@ -362,10 +426,12 @@ private GitHub repository under the inventor's control; no person other
 than the inventor is aware of the codebase, and access is restricted
 accordingly. Development and the validation experiment reported below
 were run on the inventor's local development machine (macOS). A
-seed-matched confirmatory run on a RISC-V platform is planned, both as
-independent validation on an open architecture and as evidence of
-cross-platform agreement. The forthcoming Mk3 instrument is expected to
-run the method on a Raspberry Pi 4B or a comparable compact platform.
+seed-matched confirmatory run has been completed on a RISC-V platform
+(UltraRISC UR-DP1000 under Ubuntu), providing independent validation on an
+open architecture and evidence of cross-platform agreement; the
+comparison is reported in Appendix~A. The forthcoming Mk3 instrument is
+expected to run the method on a Raspberry Pi 4B or a comparable compact
+platform.
 
 The repository's commit history provides contemporaneous, timestamped
 evidence of development and is reproduced in Annex~B. The repository was
@@ -392,7 +458,7 @@ character.
 
 \subsection{Validation experiment}
 The validation experiment anticipated in Section~9.3 has been completed.
-Recovery curves were simulated across eight rod slopes, four rod--cone
+Recovery curves were simulated across eight rod slopes, four rod-cone
 break times, six threshold noise levels, and four cone time constants
 ($\tau = 0.6$, $1.2$, $1.8$, $2.4$ minutes), with 250 seeded replications
 per condition: 192{,}000 replications in total. Every replication was
@@ -459,6 +525,20 @@ not fall below $0.988$ in any condition. Since slowed cone recovery is
 itself a feature of early disease, this robustness applies precisely to
 the population for which the instrument is intended.
 
+\paragraph{Determinism is confirmed across architectures.}
+The experiment was repeated on a second platform of entirely different
+architecture (RISC-V, running a different operating system, R version, and
+linear algebra library), with the pseudo-random generator pinned so that
+both machines simulate bit-identical data. Approximately three quarters of
+all fits were bit-identical between the two platforms, and the residual
+sum of squares agreed to one part in $10^{14}$ in $99.9\%$ of cases; the
+exhaustive profiled search selected the same solution in every case
+examined. The rare exceptions arise in the optional refinement stage when
+its improvement is at the level of floating-point rounding, and amount to
+differences of a few seconds in the estimated break time against
+confidence intervals one to four minutes wide. Appendix~A reports the
+comparison in full.
+
 The experiment was repeated in full following a correction to the
 treatment of fits at the slope bounds; no reported quantity changed by
 more than $0.004$.
@@ -474,6 +554,9 @@ Ltd. The method was conceived and developed entirely within MuMac Ltd,
 and ownership rests with the company.
 
 \subsection{Disclosure history}
+This subsection is a result of an interaction with the large language model Claude Fable (Anthropic) using the prompt \begin{quote}
+``The only people with which this has been shared are my wife, and two company directors. The directors are Ian J Murray and Bill Pigg, an NED under contract with an existing NDA. No one contributed to the innovation. I have no relationship with UoM, I have not written any public document indivating what I have invented. I commented on Bluesky that VarPro had undermined my previous work with continuous functions and gradient descent methods''\end{quote} on 14th August 2026. 
+
 The method has not been described in any paper, conference talk, poster,
 investor document, grant application, or website content. It has been
 disclosed in private to the following individuals:
@@ -523,16 +606,24 @@ unless done under confidence. The monograph is an asset in this respect
 as well as a constraint: published after filing, it would provide
 independent, dated validation of the method without costing any rights.
 
+
+\section{Bibliography} 
+
+\bibliographystyle{plain}
+\bibliography{/Users/mqbxgjk2/Dropbox/Mumac_/CODE_1/dark_criteria/submission/oldar.bib}
+
+\newpage
 \appendix
 \section{Full mathematical treatment}
 The full mathematical treatment is maintained as a companion R~Markdown
-document, \texttt{DISC-IP-003-appendix-A.Rmd}, whose numerical
+document,\\ \texttt{DISC-IP-003-appendix-A.Rmd}, whose numerical
 demonstrations are executable and were run at the date shown on the
 document. The knitted PDF is reproduced on the following pages.
 
 For the avoidance of doubt, the search space of the implementation as
-tested is: $\tau$ over 40 points from $0.01$ minutes to a bound set
-slightly above the clinical range and growing gently with the test window;
+tested is: $\tau$ over 40 points from $0.01$ minutes to the natural
+logarithm of the test duration in minutes, a bound lying slightly above
+the usual clinical range and growing gently with the test window;
 $\alpha$ over 80 points from $0.5$ minutes to the end of the test window;
 and the rod slope constrained to $[-0.5, 0]$ log units per minute, with
 fits reaching either bound re-solved exactly under that constraint. The

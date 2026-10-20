@@ -1,0 +1,25 @@
+# Dimitrov model fitting 
+rm(list = ls())
+library(Dark)
+
+## @\cite{Dimitrov:2008aa}
+# sample rate 17.5/60
+
+Thrs <- function(t){
+ 	log10(10^((Tf + Ti) - R*t) + 10^Tf)
+ 	}
+ 
+ Tf <- ct <- -1.8
+ Ti <- cc <-   4
+
+ 
+ R <- 1.04
+ tau = 0.4176
+ t <- seq(0, 20, by = .25)
+ Dim <- Thrs(t)
+ Kel <- P3(c(ct, cc, tau), t)
+ 
+ plot(t, Thrs(t))
+ lines(t, P3(c(ct, cc, tau), t))
+ 
+ # Two very different models D is linear units then taking the log, K is log units

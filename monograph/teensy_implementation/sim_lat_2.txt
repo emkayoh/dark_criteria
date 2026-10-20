@@ -1,0 +1,426 @@
+Update Test Parameters parsed parameters successfully.
+Switch to Right successful
+Fixation colour is Red
+Background colour is Red
+Background intensity 15.00 dB
+or in pwm 63462.60
+Green stimulus on the right side
+Flicker frequency (Hz): 4.00
+Stimulus duration (ms): 125
+Step down value (dB) 10.00
+Ramp rate (dB/s) 1.96
+Ramp decrement (dB) 0.01
+Fixation Max (dB) 0.00
+Fixation Min (dB) 20.00
+Flash enabled
+Flash duration (ms) 200.00
+Flash Intensity (pwm) 1.00
+Flash Intensity (dB) 0.00
+Stim Start (db) 15.00
+Update finished,
+Test has been stopped!
+Test started @ : 1371842
+Background Pin no. 8
+Fixation Pin no. 11
+Flash Pin no. 7
+Discharge flash
+HUMAN LONG ALPHA MODE: ON
+Human: N/A
+Slow Rods: N/A
+Long Alpha: P5ca
+@6732:3.22#
+@11704:5.33#
+@16776:6.13#
+@21928:6.48#
+Analysis finished (time = 0ms, mode = refine, evaluations = 82, RSS = 0.0000054516, nobs = 4, criterion = "cone-only").
+Analysis Parameter Results = 
+coneThreshold = -0.6668173176 coneOffset = 1.2272411375 coneTimeConstant = 0.0883513451 S2 = nan alpha = nan time = 0.0 runs = 82.0 nobs = 4.0
+@27169:9.61#
+Analysis finished (time = 0ms, mode = refine, evaluations = 82, RSS = 0.0195848399, nobs = 5, criterion = "cone-only").
+Analysis Parameter Results = 
+coneThreshold = -5.5250033978 coneOffset = 5.3873105917 coneTimeConstant = 3.0000000000 S2 = nan alpha = nan time = 0.0 runs = 82.0 nobs = 5.0
+@32482:7.38#
+Analysis finished (time = 0ms, mode = refine, evaluations = 82, RSS = 0.0457635068, nobs = 6, criterion = "cone-only").
+Analysis Parameter Results = 
+coneThreshold = -0.9016334045 coneOffset = 0.9835725827 coneTimeConstant = 0.2110449466 S2 = nan alpha = nan time = 0.0 runs = 82.0 nobs = 6.0
+@37859:10.33#
+Analysis finished (time = 0ms, mode = refine, evaluations = 82, RSS = 0.0588672009, nobs = 7, criterion = "cone-only").
+Analysis Parameter Results = 
+coneThreshold = -1.3559115581 coneOffset = 1.2434163483 coneTimeConstant = 0.5425899259 S2 = nan alpha = nan time = 0.0 runs = 82.0 nobs = 7.0
+@43292:10.24#
+Analysis finished (time = 0ms, mode = refine, evaluations = 82, RSS = 0.0588701796, nobs = 8, criterion = "cone-only").
+Analysis Parameter Results = 
+coneThreshold = -1.3441939166 coneOffset = 1.2338639575 coneTimeConstant = 0.5334763635 S2 = nan alpha = nan time = 0.0 runs = 82.0 nobs = 8.0
+@48773:10.60#
+Analysis finished (time = 0ms, mode = refine, evaluations = 82, RSS = 0.0589705755, nobs = 9, criterion = "cone-only").
+Analysis Parameter Results = 
+coneThreshold = -1.3039474177 coneOffset = 1.2031803184 coneTimeConstant = 0.5006035797 S2 = nan alpha = nan time = 0.0 runs = 82.0 nobs = 9.0
+@54310:11.76#
+Analysis finished (time = 0ms, mode = refine, evaluations = 82, RSS = 0.0612757004, nobs = 10, criterion = "cone-only").
+Analysis Parameter Results = 
+coneThreshold = -1.4665300561 coneOffset = 1.3280321722 coneTimeConstant = 0.6413967758 S2 = nan alpha = nan time = 0.0 runs = 82.0 nobs = 10.0
+@59879:11.51#
+Analysis finished (time = 0ms, mode = refine, evaluations = 82, RSS = 0.0619154934, nobs = 11, criterion = "cone-only").
+Analysis Parameter Results = 
+coneThreshold = -1.3948413837 coneOffset = 1.2729089882 coneTimeConstant = 0.5765081341 S2 = nan alpha = nan time = 0.0 runs = 82.0 nobs = 11.0
+@65488:11.39#
+Analysis finished (time = 0ms, mode = refine, evaluations = 82, RSS = 0.0643453952, nobs = 12, criterion = "cone-only").
+Analysis Parameter Results = 
+coneThreshold = -1.3149520382 coneOffset = 1.2198349327 coneTimeConstant = 0.5015011425 S2 = nan alpha = nan time = 0.0 runs = 82.0 nobs = 12.0
+@71129:13.08#
+Analysis finished (time = 0ms, mode = refine, evaluations = 82, RSS = 0.0715577457, nobs = 13, criterion = "cone-only").
+Analysis Parameter Results = 
+coneThreshold = -1.4292610368 coneOffset = 1.2928375574 coneTimeConstant = 0.6148961400 S2 = nan alpha = nan time = 0.0 runs = 82.0 nobs = 13.0
+@76794:13.42#
+Analysis finished (time = 0ms, mode = refine, evaluations = 82, RSS = 0.0749917236, nobs = 14, criterion = "cone-only").
+Analysis Parameter Results = 
+coneThreshold = -1.5200233680 coneOffset = 1.3570374202 coneTimeConstant = 0.7102311753 S2 = nan alpha = nan time = 0.0 runs = 82.0 nobs = 14.0
+@82483:10.98#
+Analysis finished (time = 0ms, mode = refine, evaluations = 82, RSS = 0.1089369272, nobs = 15, criterion = "cone-only").
+Analysis Parameter Results = 
+coneThreshold = -1.3350621856 coneOffset = 1.2424510513 coneTimeConstant = 0.5114849362 S2 = nan alpha = nan time = 0.0 runs = 82.0 nobs = 15.0
+@88196:12.29#
+Analysis finished (time = 0ms, mode = refine, evaluations = 82, RSS = 0.1098844155, nobs = 16, criterion = "cone-only").
+Analysis Parameter Results = 
+coneThreshold = -1.3179103793 coneOffset = 1.2351878459 coneTimeConstant = 0.4928262103 S2 = nan alpha = nan time = 0.0 runs = 82.0 nobs = 16.0
+@93917:13.74#
+Analysis finished (time = 48ms, mode = global, evaluations = 3292, RSS = 0.1176948606, nobs = 17, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.2038530512 coneOffset = 1.1419205823 coneTimeConstant = 0.4139612055 S2 = -0.1234376380 alpha = 0.5413666670 time = 48.0 runs = 3292.0 nobs = 17.0
+@99712:16.26#
+Analysis finished (time = 2ms, mode = refine, evaluations = 162, RSS = 0.1766877215, nobs = 18, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -0.9982173198 coneOffset = 1.0559683833 coneTimeConstant = 0.2556971297 S2 = -0.3870311374 alpha = 0.5413666668 time = 2.0 runs = 162.0 nobs = 18.0
+@105469:14.57#
+Analysis finished (time = 2ms, mode = refine, evaluations = 165, RSS = 0.1767665536, nobs = 19, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.0021303431 coneOffset = 1.0559255214 coneTimeConstant = 0.2587261206 S2 = -0.3810790398 alpha = 0.5413666667 time = 2.0 runs = 165.0 nobs = 19.0
+@111242:14.27#
+Analysis finished (time = 2ms, mode = refine, evaluations = 166, RSS = 0.1806088824, nobs = 20, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.0304354908 coneOffset = 1.0564878176 coneTimeConstant = 0.2814920282 S2 = -0.3425012581 alpha = 0.5413666667 time = 2.0 runs = 166.0 nobs = 20.0
+@117015:13.96#
+Analysis finished (time = 3ms, mode = refine, evaluations = 166, RSS = 0.1899474867, nobs = 21, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.0861669648 coneOffset = 1.0657348435 coneTimeConstant = 0.3287487065 S2 = -0.2784729094 alpha = 0.5413666667 time = 3.0 runs = 166.0 nobs = 21.0
+@122804:14.99#
+Analysis finished (time = 2ms, mode = refine, evaluations = 149, RSS = 0.1899602243, nobs = 22, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.0885290653 coneOffset = 1.0663233005 coneTimeConstant = 0.3308214623 S2 = -0.2760673940 alpha = 0.5413666680 time = 2.0 runs = 149.0 nobs = 22.0
+@128601:13.41#
+Analysis finished (time = 3ms, mode = refine, evaluations = 167, RSS = 0.2128986853, nobs = 23, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.4094117456 coneOffset = 1.2757200918 coneTimeConstant = 0.5990271489 S2 = -0.0862165367 alpha = 1.0914666671 time = 3.0 runs = 167.0 nobs = 23.0
+@134398:14.85#
+Analysis finished (time = 3ms, mode = refine, evaluations = 154, RSS = 0.2129364814, nobs = 24, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.4062398429 coneOffset = 1.2736908901 coneTimeConstant = 0.5956631701 S2 = -0.0902393652 alpha = 1.0914666669 time = 3.0 runs = 154.0 nobs = 24.0
+@140211:14.39#
+Analysis finished (time = 3ms, mode = refine, evaluations = 153, RSS = 0.2151001520, nobs = 25, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.4305622424 coneOffset = 1.2892728599 coneTimeConstant = 0.6218186635 S2 = -0.0623692204 alpha = 1.0914666672 time = 3.0 runs = 153.0 nobs = 25.0
+@146016:16.27#
+Analysis finished (time = 3ms, mode = refine, evaluations = 165, RSS = 0.2276132868, nobs = 26, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.4212971830 coneOffset = 1.2885473224 coneTimeConstant = 0.6060830108 S2 = -0.1262435471 alpha = 1.3747166649 time = 3.0 runs = 165.0 nobs = 26.0
+@151830:15.23#
+Analysis finished (time = 3ms, mode = refine, evaluations = 153, RSS = 0.2280539452, nobs = 27, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.4273429117 coneOffset = 1.2918050485 coneTimeConstant = 0.6132170120 S2 = -0.1160777271 alpha = 1.3747166654 time = 3.0 runs = 153.0 nobs = 27.0
+@157651:14.95#
+Analysis finished (time = 3ms, mode = refine, evaluations = 153, RSS = 0.2306880891, nobs = 28, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.4423657367 coneOffset = 1.2999583665 coneTimeConstant = 0.6311954888 S2 = -0.0936447849 alpha = 1.3747166656 time = 3.0 runs = 153.0 nobs = 28.0
+@163473:14.57#
+Analysis finished (time = 3ms, mode = refine, evaluations = 149, RSS = 0.2373180259, nobs = 29, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.4673594112 coneOffset = 1.3140529242 coneTimeConstant = 0.6615147724 S2 = -0.0608169997 alpha = 1.3747166643 time = 3.0 runs = 149.0 nobs = 29.0
+@169295:14.64#
+Analysis finished (time = 3ms, mode = refine, evaluations = 156, RSS = 0.2414157241, nobs = 30, criterion = "S2 below detection threshold; |S2| < 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.4881309103 coneOffset = 1.3262886809 coneTimeConstant = 0.6870254929 S2 = -0.0366971481 alpha = 1.3747166674 time = 3.0 runs = 156.0 nobs = 30.0
+@175117:14.19#
+Analysis finished (time = 4ms, mode = refine, evaluations = 158, RSS = 0.2501580464, nobs = 31, criterion = "S2 below detection threshold; |S2| < 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5204518428 coneOffset = 1.3462747113 coneTimeConstant = 0.7271451893 S2 = -0.0033906709 alpha = 1.3747166742 time = 4.0 runs = 158.0 nobs = 31.0
+@180947:14.51#
+Analysis finished (time = 2ms, mode = refine, evaluations = 98, RSS = 0.2526492013, nobs = 32, criterion = "S2 below detection threshold; |S2| < 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5180985491 coneOffset = 1.3473636803 coneTimeConstant = 0.7212412912 S2 = 0.0000000000 alpha = 1.4610392153 time = 2.0 runs = 98.0 nobs = 32.0
+@186776:14.90#
+Analysis finished (time = 2ms, mode = refine, evaluations = 93, RSS = 0.2527329909, nobs = 33, criterion = "S2 below detection threshold; |S2| < 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5168687740 coneOffset = 1.3471645221 coneTimeConstant = 0.7190580406 S2 = 0.0000000000 alpha = 1.5408684576 time = 2.0 runs = 93.0 nobs = 33.0
+@192604:15.44#
+Analysis finished (time = 2ms, mode = refine, evaluations = 98, RSS = 0.2544113368, nobs = 34, criterion = "S2 below detection threshold; |S2| < 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5219995690 coneOffset = 1.3478714612 coneTimeConstant = 0.7283466440 S2 = 0.0000000000 alpha = 1.2454591969 time = 2.0 runs = 98.0 nobs = 34.0
+@198433:15.99#
+Analysis finished (time = 4ms, mode = refine, evaluations = 164, RSS = 0.2611521921, nobs = 35, criterion = "S2 below detection threshold; |S2| < 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.4973460110 coneOffset = 1.3334865762 coneTimeConstant = 0.6965601896 S2 = -0.0206165170 alpha = 1.3747166660 time = 4.0 runs = 164.0 nobs = 35.0
+@204264:15.55#
+Analysis finished (time = 4ms, mode = refine, evaluations = 163, RSS = 0.2616919842, nobs = 36, criterion = "S2 below detection threshold; |S2| < 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.4905635910 coneOffset = 1.3298472231 coneTimeConstant = 0.6876629400 S2 = -0.0261226995 alpha = 1.3747166687 time = 4.0 runs = 163.0 nobs = 36.0
+@210103:16.10#
+Analysis finished (time = 4ms, mode = refine, evaluations = 156, RSS = 0.2659174256, nobs = 37, criterion = "S2 below detection threshold; |S2| < 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.4730938866 coneOffset = 1.3210788453 coneTimeConstant = 0.6645414960 S2 = -0.0400685249 alpha = 1.3747166667 time = 4.0 runs = 156.0 nobs = 37.0
+@215934:16.43#
+Analysis finished (time = 5ms, mode = refine, evaluations = 168, RSS = 0.2721204628, nobs = 38, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.4542652157 coneOffset = 1.3125145996 coneTimeConstant = 0.6394803393 S2 = -0.0550925332 alpha = 1.3747166664 time = 5.0 runs = 168.0 nobs = 38.0
+@221773:16.21#
+Analysis finished (time = 5ms, mode = refine, evaluations = 169, RSS = 0.2736047699, nobs = 39, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.4459359026 coneOffset = 1.3090579142 coneTimeConstant = 0.6283387075 S2 = -0.0616875013 alpha = 1.3747166666 time = 5.0 runs = 169.0 nobs = 39.0
+@227604:16.59#
+Analysis finished (time = 5ms, mode = refine, evaluations = 224, RSS = 0.2647690977, nobs = 40, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5109848418 coneOffset = 1.3472386388 coneTimeConstant = 0.7078844673 S2 = -0.1357722705 alpha = 2.7933999999 time = 5.0 runs = 224.0 nobs = 40.0
+@233443:13.37#
+Analysis finished (time = 5ms, mode = refine, evaluations = 194, RSS = 0.3388687731, nobs = 41, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5323899116 coneOffset = 1.3496731689 coneTimeConstant = 0.7471495037 S2 = -0.0514879194 alpha = 2.8907166587 time = 5.0 runs = 194.0 nobs = 41.0
+@239274:16.78#
+Analysis finished (time = 6ms, mode = refine, evaluations = 184, RSS = 0.3453737345, nobs = 42, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5273100870 coneOffset = 1.3487800515 coneTimeConstant = 0.7379147131 S2 = -0.0811006883 alpha = 2.9186166670 time = 6.0 runs = 184.0 nobs = 42.0
+@245114:12.98#
+Analysis finished (time = 5ms, mode = refine, evaluations = 157, RSS = 0.4221997776, nobs = 43, criterion = "S2 below detection threshold; |S2| < 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5317843032 coneOffset = 1.3452348060 coneTimeConstant = 0.7514306081 S2 = -0.0056032173 alpha = 1.0914667257 time = 5.0 runs = 157.0 nobs = 43.0
+@250954:16.87#
+Analysis finished (time = 5ms, mode = refine, evaluations = 155, RSS = 0.4387489254, nobs = 44, criterion = "S2 below detection threshold; |S2| < 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.4968223478 coneOffset = 1.3304299742 coneTimeConstant = 0.6989335836 S2 = -0.0266490995 alpha = 1.3747166679 time = 5.0 runs = 155.0 nobs = 44.0
+@256785:12.10#
+Analysis finished (time = 3ms, mode = refine, evaluations = 106, RSS = 0.5508529440, nobs = 45, criterion = "S2 below detection threshold; |S2| < 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5340668728 coneOffset = 1.3534091579 coneTimeConstant = 0.7464949726 S2 = 0.0000000000 alpha = 1.0117114697 time = 3.0 runs = 106.0 nobs = 45.0
+@262623:14.10#
+Analysis finished (time = 3ms, mode = refine, evaluations = 103, RSS = 0.5645021568, nobs = 46, criterion = "S2 below detection threshold; |S2| < 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5269669471 coneOffset = 1.3540386702 coneTimeConstant = 0.7316714099 S2 = 0.0000000000 alpha = 1.0464149515 time = 3.0 runs = 103.0 nobs = 46.0
+@268461:14.69#
+Analysis finished (time = 3ms, mode = refine, evaluations = 98, RSS = 0.5673626511, nobs = 47, criterion = "S2 below detection threshold; |S2| < 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5239408391 coneOffset = 1.3543527731 coneTimeConstant = 0.7254032174 S2 = 0.0000000000 alpha = 1.1131443425 time = 3.0 runs = 98.0 nobs = 47.0
+@274299:15.16#
+Analysis finished (time = 3ms, mode = refine, evaluations = 99, RSS = 0.5673893744, nobs = 48, criterion = "S2 below detection threshold; |S2| < 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5236639366 coneOffset = 1.3543847416 coneTimeConstant = 0.7248292180 S2 = 0.0000000000 alpha = 1.0588595323 time = 3.0 runs = 99.0 nobs = 48.0
+@280129:15.44#
+Analysis finished (time = 3ms, mode = refine, evaluations = 97, RSS = 0.5678725780, nobs = 49, criterion = "S2 below detection threshold; |S2| < 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5247925934 coneOffset = 1.3542356599 coneTimeConstant = 0.7271907540 S2 = 0.0000000000 alpha = 1.0535083623 time = 3.0 runs = 97.0 nobs = 49.0
+@285967:16.13#
+Analysis finished (time = 3ms, mode = refine, evaluations = 98, RSS = 0.5756506885, nobs = 50, criterion = "S2 below detection threshold; |S2| < 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5291803350 coneOffset = 1.3535834129 coneTimeConstant = 0.7365255529 S2 = 0.0000000000 alpha = 1.0850930369 time = 3.0 runs = 98.0 nobs = 50.0
+@291805:14.21#
+Analysis finished (time = 4ms, mode = refine, evaluations = 101, RSS = 0.5865187600, nobs = 51, criterion = "S2 below detection threshold; |S2| < 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5242168065 coneOffset = 1.3543778596 coneTimeConstant = 0.7259181759 S2 = 0.0000000000 alpha = 1.2193388612 time = 4.0 runs = 101.0 nobs = 51.0
+@297643:14.77#
+Analysis finished (time = 4ms, mode = refine, evaluations = 99, RSS = 0.5885601441, nobs = 52, criterion = "S2 below detection threshold; |S2| < 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5221826589 coneOffset = 1.3547175704 coneTimeConstant = 0.7216052633 S2 = 0.0000000000 alpha = 1.1697139129 time = 4.0 runs = 99.0 nobs = 52.0
+@303481:15.24#
+Analysis finished (time = 4ms, mode = refine, evaluations = 99, RSS = 0.5885668830, nobs = 53, criterion = "S2 below detection threshold; |S2| < 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5222942387 coneOffset = 1.3546991706 coneTimeConstant = 0.7218409749 S2 = 0.0000000000 alpha = 1.2860998761 time = 4.0 runs = 99.0 nobs = 53.0
+@309319:15.81#
+Analysis finished (time = 3ms, mode = refine, evaluations = 92, RSS = 0.5919527389, nobs = 54, criterion = "S2 below detection threshold; |S2| < 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5247220302 coneOffset = 1.3542344831 coneTimeConstant = 0.7270524974 S2 = 0.0000000000 alpha = 1.3362125568 time = 3.0 runs = 92.0 nobs = 54.0
+@315157:13.89#
+Analysis finished (time = 4ms, mode = refine, evaluations = 99, RSS = 0.6092871345, nobs = 55, criterion = "S2 below detection threshold; |S2| < 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5194631866 coneOffset = 1.3552598698 coneTimeConstant = 0.7157961992 S2 = 0.0000000000 alpha = 1.4357271175 time = 4.0 runs = 99.0 nobs = 55.0
+@320987:13.43#
+Analysis finished (time = 4ms, mode = refine, evaluations = 102, RSS = 0.6388752096, nobs = 56, criterion = "S2 below detection threshold; |S2| < 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5129889946 coneOffset = 1.3564660593 coneTimeConstant = 0.7022530993 S2 = 0.0000000000 alpha = 1.5485242333 time = 4.0 runs = 102.0 nobs = 56.0
+@326826:14.19#
+Analysis finished (time = 4ms, mode = refine, evaluations = 98, RSS = 0.6473579827, nobs = 57, criterion = "S2 below detection threshold; |S2| < 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5097006394 coneOffset = 1.3570545979 coneTimeConstant = 0.6955045467 S2 = 0.0000000000 alpha = 1.5696765602 time = 4.0 runs = 98.0 nobs = 57.0
+@332664:14.75#
+Analysis finished (time = 4ms, mode = refine, evaluations = 96, RSS = 0.6484715964, nobs = 58, criterion = "S2 below detection threshold; |S2| < 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5085556834 coneOffset = 1.3572664057 coneTimeConstant = 0.6931654953 S2 = 0.0000000000 alpha = 1.6554416027 time = 4.0 runs = 96.0 nobs = 58.0
+@338502:15.73#
+Analysis finished (time = 4ms, mode = refine, evaluations = 98, RSS = 0.6525166524, nobs = 59, criterion = "S2 below detection threshold; |S2| < 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5106718799 coneOffset = 1.3568617424 coneTimeConstant = 0.6975080695 S2 = 0.0000000000 alpha = 1.7241084797 time = 4.0 runs = 98.0 nobs = 59.0
+@344340:16.84#
+Analysis finished (time = 4ms, mode = refine, evaluations = 100, RSS = 0.6816396832, nobs = 60, criterion = "S2 below detection threshold; |S2| < 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5162439354 coneOffset = 1.3557188158 coneTimeConstant = 0.7091618435 S2 = 0.0000000000 alpha = 1.7706627761 time = 4.0 runs = 100.0 nobs = 60.0
+@350179:13.56#
+Analysis finished (time = 4ms, mode = refine, evaluations = 99, RSS = 0.7063655775, nobs = 61, criterion = "S2 below detection threshold; |S2| < 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5112594954 coneOffset = 1.3567742412 coneTimeConstant = 0.6986961466 S2 = 0.0000000000 alpha = 1.8089637336 time = 4.0 runs = 99.0 nobs = 61.0
+@356018:14.24#
+Analysis finished (time = 4ms, mode = refine, evaluations = 100, RSS = 0.7137276848, nobs = 62, criterion = "S2 below detection threshold; |S2| < 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5086536889 coneOffset = 1.3573002829 coneTimeConstant = 0.6933165638 S2 = 0.0000000000 alpha = 1.8284622074 time = 4.0 runs = 100.0 nobs = 62.0
+@361849:13.69#
+Analysis finished (time = 4ms, mode = refine, evaluations = 99, RSS = 0.7327037405, nobs = 63, criterion = "S2 below detection threshold; |S2| < 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5046317319 coneOffset = 1.3580803671 coneTimeConstant = 0.6851320427 S2 = 0.0000000000 alpha = 1.8581032940 time = 4.0 runs = 99.0 nobs = 63.0
+@367688:14.31#
+Analysis finished (time = 5ms, mode = refine, evaluations = 101, RSS = 0.7380034284, nobs = 64, criterion = "S2 below detection threshold; |S2| < 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5025838447 coneOffset = 1.3584612431 coneTimeConstant = 0.6810204283 S2 = 0.0000000000 alpha = 1.6870815797 time = 5.0 runs = 101.0 nobs = 64.0
+@373527:14.71#
+Analysis finished (time = 4ms, mode = refine, evaluations = 94, RSS = 0.7389517213, nobs = 65, criterion = "S2 below detection threshold; |S2| < 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5017448551 coneOffset = 1.3586112949 coneTimeConstant = 0.6793490163 S2 = 0.0000000000 alpha = 1.6924772751 time = 4.0 runs = 94.0 nobs = 65.0
+@379318:15.02#
+Analysis finished (time = 4ms, mode = refine, evaluations = 95, RSS = 0.7389521128, nobs = 66, criterion = "S2 below detection threshold; |S2| < 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5017604920 coneOffset = 1.3586149118 coneTimeConstant = 0.6793746662 S2 = 0.0000000000 alpha = 1.6923946346 time = 4.0 runs = 95.0 nobs = 66.0
+@385029:15.69#
+Analysis finished (time = 5ms, mode = refine, evaluations = 100, RSS = 0.7433171078, nobs = 67, criterion = "S2 below detection threshold; |S2| < 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5034724096 coneOffset = 1.3582893191 coneTimeConstant = 0.6828073020 S2 = 0.0000000000 alpha = 1.8506021311 time = 5.0 runs = 100.0 nobs = 67.0
+@390740:18.65#
+Analysis finished (time = 8ms, mode = refine, evaluations = 193, RSS = 0.8583883437, nobs = 68, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5036057446 coneOffset = 1.3581716198 coneTimeConstant = 0.6831592603 S2 = -0.0626699683 alpha = 5.5123333316 time = 8.0 runs = 193.0 nobs = 68.0
+@396454:13.39#
+Analysis finished (time = 7ms, mode = refine, evaluations = 172, RSS = 0.8997740836, nobs = 69, criterion = "S2 below detection threshold; |S2| < 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5065887405 coneOffset = 1.3576558673 coneTimeConstant = 0.6891426847 S2 = -0.0122501107 alpha = 5.6075666291 time = 7.0 runs = 172.0 nobs = 69.0
+@402167:14.55#
+Analysis finished (time = 5ms, mode = refine, evaluations = 104, RSS = 0.9030626074, nobs = 70, criterion = "S2 below detection threshold; |S2| < 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5070201932 coneOffset = 1.3575758403 coneTimeConstant = 0.6900174714 S2 = 0.0000000000 alpha = 5.5889901368 time = 5.0 runs = 104.0 nobs = 70.0
+@407878:15.53#
+Analysis finished (time = 9ms, mode = refine, evaluations = 249, RSS = 0.9040949291, nobs = 71, criterion = "S2 below detection threshold; |S2| < 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5060481345 coneOffset = 1.3554824895 coneTimeConstant = 0.6900174714 S2 = -0.0175040221 alpha = 5.7979666667 time = 9.0 runs = 249.0 nobs = 71.0
+@413593:14.76#
+Analysis finished (time = 8ms, mode = refine, evaluations = 190, RSS = 0.9054679491, nobs = 72, criterion = "S2 below detection threshold; |S2| < 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5054972221 coneOffset = 1.3578967550 coneTimeConstant = 0.6868988317 S2 = -0.0142137747 alpha = 5.8932166585 time = 8.0 runs = 190.0 nobs = 72.0
+@419307:15.18#
+Analysis finished (time = 9ms, mode = refine, evaluations = 262, RSS = 0.9050283203, nobs = 73, criterion = "S2 below detection threshold; |S2| < 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5052280034 coneOffset = 1.3573163075 coneTimeConstant = 0.6868988317 S2 = -0.0190115013 alpha = 5.9884500000 time = 9.0 runs = 262.0 nobs = 73.0
+@425023:17.88#
+Analysis finished (time = 8ms, mode = refine, evaluations = 191, RSS = 0.9549998156, nobs = 74, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5021218530 coneOffset = 1.3585434595 coneTimeConstant = 0.6800997078 S2 = -0.0922629248 alpha = 6.0837166639 time = 8.0 runs = 191.0 nobs = 74.0
+@430744:16.10#
+Analysis finished (time = 7ms, mode = refine, evaluations = 135, RSS = 0.9542261948, nobs = 75, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5025830690 coneOffset = 1.3584656267 coneTimeConstant = 0.6810150133 S2 = -0.1066885433 alpha = 6.1766766796 time = 7.0 runs = 135.0 nobs = 75.0
+@436465:16.83#
+Analysis finished (time = 8ms, mode = refine, evaluations = 155, RSS = 0.9571085542, nobs = 76, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5023276849 coneOffset = 1.3585167724 coneTimeConstant = 0.6805009227 S2 = -0.1286519483 alpha = 6.2254500390 time = 8.0 runs = 155.0 nobs = 76.0
+@442180:16.99#
+Analysis finished (time = 10ms, mode = refine, evaluations = 180, RSS = 0.9589663906, nobs = 77, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5017856287 coneOffset = 1.3586185898 coneTimeConstant = 0.6794171315 S2 = -0.1388142296 alpha = 6.2254500463 time = 10.0 runs = 180.0 nobs = 77.0
+@447896:16.09#
+Analysis finished (time = 8ms, mode = refine, evaluations = 151, RSS = 0.9623154876, nobs = 78, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5025091959 coneOffset = 1.3584832514 coneTimeConstant = 0.6808638133 S2 = -0.1271315031 alpha = 6.2254494340 time = 8.0 runs = 151.0 nobs = 78.0
+@453611:19.11#
+Analysis finished (time = 9ms, mode = refine, evaluations = 203, RSS = 0.9986462684, nobs = 79, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5042085065 coneOffset = 1.3581668817 coneTimeConstant = 0.6842733444 S2 = -0.2474773535 alpha = 6.5601833331 time = 9.0 runs = 203.0 nobs = 79.0
+@459327:18.44#
+Analysis finished (time = 10ms, mode = refine, evaluations = 271, RSS = 0.9884984143, nobs = 80, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5044374585 coneOffset = 1.3586602170 coneTimeConstant = 0.6842733444 S2 = -0.3039278049 alpha = 6.6554500000 time = 10.0 runs = 271.0 nobs = 80.0
+@465044:17.89#
+Analysis finished (time = 9ms, mode = refine, evaluations = 191, RSS = 0.9858944876, nobs = 81, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5067035277 coneOffset = 1.3576481599 coneTimeConstant = 0.6893627647 S2 = -0.3332147134 alpha = 6.7507333221 time = 9.0 runs = 191.0 nobs = 81.0
+@470759:17.37#
+Analysis finished (time = 10ms, mode = refine, evaluations = 177, RSS = 0.9990472379, nobs = 82, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5071024899 coneOffset = 1.3575602495 coneTimeConstant = 0.6901851282 S2 = -0.2864826237 alpha = 6.7027833489 time = 10.0 runs = 177.0 nobs = 82.0
+@476476:19.79#
+Analysis finished (time = 7ms, mode = refine, evaluations = 119, RSS = 1.0091891613, nobs = 83, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5070195907 coneOffset = 1.3575857276 coneTimeConstant = 0.6900077889 S2 = -0.3257814351 alpha = 6.7544104418 time = 7.0 runs = 119.0 nobs = 83.0
+@482189:20.44#
+Analysis finished (time = 7ms, mode = refine, evaluations = 127, RSS = 1.0190254784, nobs = 84, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5081025515 coneOffset = 1.3573444233 coneTimeConstant = 0.6922469160 S2 = -0.3798382565 alpha = 6.8406810862 time = 7.0 runs = 127.0 nobs = 84.0
+@487903:19.93#
+Analysis finished (time = 8ms, mode = refine, evaluations = 131, RSS = 1.0190484174, nobs = 85, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5081028780 coneOffset = 1.3573438136 coneTimeConstant = 0.6922480669 S2 = -0.3781758319 alpha = 6.8387799959 time = 8.0 runs = 131.0 nobs = 85.0
+@493617:20.24#
+Analysis finished (time = 8ms, mode = refine, evaluations = 130, RSS = 1.0191073615, nobs = 86, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5081033498 coneOffset = 1.3573405561 coneTimeConstant = 0.6922518034 S2 = -0.3758630446 alpha = 6.8359066812 time = 8.0 runs = 130.0 nobs = 86.0
+@499331:20.55#
+Analysis finished (time = 8ms, mode = refine, evaluations = 132, RSS = 1.0192113169, nobs = 87, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5081032855 coneOffset = 1.3573419937 coneTimeConstant = 0.6922504456 S2 = -0.3731777347 alpha = 6.8322966844 time = 8.0 runs = 132.0 nobs = 87.0
+@505046:20.15#
+Analysis finished (time = 8ms, mode = refine, evaluations = 124, RSS = 1.0245714639, nobs = 88, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5070197715 coneOffset = 1.3575760814 coneTimeConstant = 0.6900164820 S2 = -0.3469625093 alpha = 6.7748763642 time = 8.0 runs = 124.0 nobs = 88.0
+@510768:20.67#
+Analysis finished (time = 8ms, mode = refine, evaluations = 132, RSS = 1.0260794080, nobs = 89, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5070194876 coneOffset = 1.3575804517 coneTimeConstant = 0.6900122357 S2 = -0.3397925268 alpha = 6.7629998019 time = 8.0 runs = 132.0 nobs = 89.0
+@516483:20.81#
+Analysis finished (time = 8ms, mode = refine, evaluations = 129, RSS = 1.0283269115, nobs = 90, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5070203449 coneOffset = 1.3575772882 coneTimeConstant = 0.6900166849 S2 = -0.3319172753 alpha = 6.7486152423 time = 8.0 runs = 129.0 nobs = 90.0
+@522198:20.51#
+Analysis finished (time = 8ms, mode = refine, evaluations = 126, RSS = 1.0373512022, nobs = 91, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5070208109 coneOffset = 1.3575741949 coneTimeConstant = 0.6900204480 S2 = -0.3176380919 alpha = 6.7192734032 time = 8.0 runs = 126.0 nobs = 91.0
+@527913:20.20#
+Analysis finished (time = 10ms, mode = refine, evaluations = 157, RSS = 1.0556606289, nobs = 92, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5079200753 coneOffset = 1.3573635175 coneTimeConstant = 0.6918886602 S2 = -0.3043807403 alpha = 6.7027833166 time = 10.0 runs = 157.0 nobs = 92.0
+@533630:18.23#
+Analysis finished (time = 8ms, mode = refine, evaluations = 129, RSS = 1.1605486976, nobs = 93, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5083196274 coneOffset = 1.3572528841 coneTimeConstant = 0.6927361975 S2 = -0.2691796127 alpha = 6.6178691981 time = 8.0 runs = 129.0 nobs = 93.0
+@539345:23.71#
+Analysis finished (time = 8ms, mode = refine, evaluations = 127, RSS = 1.2032873539, nobs = 94, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5083171994 coneOffset = 1.3572680244 coneTimeConstant = 0.6927178390 S2 = -0.2909158295 alpha = 6.6787709182 time = 8.0 runs = 127.0 nobs = 94.0
+@545060:22.19#
+Analysis finished (time = 8ms, mode = refine, evaluations = 126, RSS = 1.2033889875, nobs = 95, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5083167103 coneOffset = 1.3572742828 coneTimeConstant = 0.6927114312 S2 = -0.2918956578 alpha = 6.6814121209 time = 8.0 runs = 126.0 nobs = 95.0
+@550775:21.82#
+Analysis finished (time = 9ms, mode = refine, evaluations = 128, RSS = 1.2060437630, nobs = 96, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5083176576 coneOffset = 1.3572651403 coneTimeConstant = 0.6927213379 S2 = -0.2872651848 alpha = 6.6682712484 time = 9.0 runs = 128.0 nobs = 96.0
+@556490:21.97#
+Analysis finished (time = 9ms, mode = refine, evaluations = 124, RSS = 1.2091741282, nobs = 97, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5083175937 coneOffset = 1.3572657558 coneTimeConstant = 0.6927208477 S2 = -0.2825978770 alpha = 6.6540655457 time = 9.0 runs = 124.0 nobs = 97.0
+@562205:21.69#
+Analysis finished (time = 9ms, mode = refine, evaluations = 125, RSS = 1.2191523673, nobs = 98, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5083193218 coneOffset = 1.3572585569 coneTimeConstant = 0.6927306753 S2 = -0.2748425874 alpha = 6.6285124631 time = 9.0 runs = 125.0 nobs = 98.0
+@567920:21.26#
+Analysis finished (time = 13ms, mode = refine, evaluations = 176, RSS = 1.2422111057, nobs = 99, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5090785323 coneOffset = 1.3570715226 coneTimeConstant = 0.6943229175 S2 = -0.2660839280 alpha = 6.6075666698 time = 13.0 runs = 176.0 nobs = 99.0
+@573639:22.73#
+Analysis finished (time = 12ms, mode = refine, evaluations = 173, RSS = 1.2426581394, nobs = 100, criterion = "S2 detected; |S2| >= 0.55*RMSE").
+Analysis Parameter Results = 
+coneThreshold = -1.5093008881 coneOffset = 1.3570206735 coneTimeConstant = 0.6947865383 S2 = -0.2652776503 alpha = 6.6075666664 time = 12.0 runs = 173.0 nobs = 100.0
+Test stopped after: 575453 ms
+Look-for: searching...
+Look-for finished (time = 248ms, evaluations = 3321, RSS = 1.2426581394, nobs = 100).
+Look-for Parameter Results = 
+coneThreshold = -1.5093013024 coneOffset = 1.3570171180 coneTimeConstant = 0.6947904325 S2 = -0.2652774436 alpha = 6.6075666668 time = 248.0 runs = 3321.0 nobs = 100.0
