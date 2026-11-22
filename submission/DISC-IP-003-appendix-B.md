@@ -2,7 +2,7 @@
 ## Appendix B to DISC-IP-003: derivation, operating point and implementation
 
 Dr Jeremiah MF Kelly
-11 October 2026
+11 October 2026, revised 17 November 2026
 
 ---
 
@@ -12,7 +12,8 @@ Section 6 of DISC-IP-003 reports that the shallowest rod slope the method
 reliably identifies is about 0.5 to 0.6 times the threshold noise per minute,
 consistently across a fourfold range of cone time constants. The RapiDA
 application uses a single coefficient derived from that result to decide
-whether a fitted rod slope should be reported with a caveat.
+whether a rod-cone break is reported. Until 17 November 2026 the same
+coefficient decided only whether a fitted rod slope carried a caveat.
 
 This appendix records which coefficient was chosen and why, states the units
 in which it applies, sets out the rule the instrument actually implements as
@@ -46,7 +47,7 @@ Expressed as a ratio, the detection threshold was consistently about 0.5 to
 0.6 times the threshold noise per minute across all four cone time constant
 sets.
 
-**Supporting work.** `dark_criteria`, commit TODO, held at TODO. The
+**Supporting work.** `dark_criteria`, commit a611bf3, held at https://github.com/emkayoh/dark_criteria. The
 simulation design, the number of replications per condition and the
 derivation of the 90% criterion are recorded there. This appendix summarises
 rather than reproduces that work, as Appendix A does for the cross-platform
@@ -74,9 +75,10 @@ relationship holds regardless of how quickly the patient's cones recover.
 Two alternatives were considered and rejected:
 
 - **The conservative endpoint, 0.6.** This would widen the range of slopes
-  carrying a caveat, at the cost of qualifying results the experiment shows
-  are detectable in three of the four regimes. Appropriate if the caveat were
-  a clinical decision rule; it is not.
+  withheld, at the cost of withholding rod phases the experiment shows are
+  detectable in three of the four regimes. Appropriate if the rule were a
+  clinical decision rule; it is not. It decides what a recording can support
+  being reported.
 - **A coefficient varying with the fitted cone time constant.** Rejected as
   unsupported: the experiment found no systematic dependence, so a varying
   coefficient would encode simulation noise as if it were structure.
@@ -122,9 +124,20 @@ The comparison is made on the magnitude of the slope.
 The experiment measured the detection limit using a rule that declares a rod
 phase when the confidence interval for the slope excludes zero. The
 instrument does not implement that rule. It compares the fitted slope against
-the coefficient times the residual standard deviation of the fit:
+the coefficient times the residual standard deviation of the full-model fit:
 
-    caveat if |S2| < k * RMSE
+    no rod-cone break reported if |S2| < k * s,   s = sqrt(SS / (n - 5))
+
+The noise was named RMSE in this line until the revision of 17 November 2026.
+RMSE conventionally divides by n, and s by n - 5; the two differ by
+sqrt(n / (n - 5)), 1.10 at 30 observations and 1.63 at 8, so the name invited
+the wrong estimator, and an implementation briefly used it.
+
+**Consequence.** Where no break is detected the result is reported as a single
+exponential: the rod slope, the break time, their uncertainties and the rod
+intercept time are not reported. A single exponential names the model and not
+the photoreceptors; after a weak bleach, a mixed rod and cone recovery can take
+that shape. Until 17 November 2026 the slope was reported with a caveat.
 
 These are related but not identical tests, and the difference should be
 stated rather than left to be discovered.
@@ -136,16 +149,17 @@ recording could have resolved.
 
 **What it does not claim.** That this particular slope is not statistically
 distinguishable from zero. That is the confidence-interval test, and the
-instrument already holds the information to perform it, since `S2CI` is
-computed and stored. The two tests will usually agree and will sometimes
+instrument already holds the information to perform it, since the half-width
+`S2HW95` is computed and stored. The two tests will usually agree and will sometimes
 differ, particularly where the number of observations is small and the
 interval is wide for reasons unrelated to the noise level.
 
-**Consequence for report wording.** The caveat must describe the limit of the
-recording, not the status of the finding. Wording of the form "a rod slope
+**Consequence for report wording.** The statement must describe the limit of
+the recording, not the status of the finding. Wording of the form "a rod slope
 below X cannot be distinguished from zero in a recording of this noise" is
-supported. Wording of the form "this slope is not distinguishable from zero"
-is not, unless the rule is changed to the confidence-interval test.
+supported, and is what the report states where no break is detected. Wording
+of the form "this slope is not distinguishable from zero" is not, unless the
+rule is changed to the confidence-interval test.
 
 **Open point.** Whether the instrument should adopt the confidence-interval
 rule, which would align it with the experiment, or retain the noise-ratio
@@ -154,12 +168,18 @@ To be settled before the Mk3 implementation. Either way, the rule and the
 coefficient are versioned together (Section 5).
 
 **Which noise estimate.** The instrument uses the residual standard deviation
-of the full-model fit, not the leave-one-out refit. The leave-one-out value
+of the full-model fit, `Report.noise`, not the leave-one-out refit. The leave-one-out value
 reflects the influence of a single point rather than the noise level of the
 recording, and is therefore the wrong estimator for this purpose. The
 experiment's "threshold noise" is the noise of the simulated measurements;
 the full-model residual standard deviation is the instrument's estimate of
 the same quantity for a real recording.
+
+**The firmware differs.** Its in-test criterion compares |S2| with
+0.55 x sqrt(RSS / n), the conventional RMSE, and so declares breaks the
+application's rule does not, by the factor above. The in-test estimate is not
+the result of record. The difference is recorded in RAP-DCR-001 and is to be
+removed at a firmware release made for another reason.
 
 ---
 
@@ -169,7 +189,9 @@ The coefficient is held once, in `datapoint/constants.py`:
 
     DETECTION_THRESHOLD_K = 0.55
 
-and is applied identically in the on-screen report and the PDF.
+and the comparison is made once, by `rod_break_detected` in
+`datapoint/analysis/gradient.py`, which the fit, the on-screen report and the
+PDF all call.
 
 Each analysed result records the rule that produced its classification in
 `Report.result_class_rule`. That identifier names this appendix, not
@@ -182,6 +204,15 @@ and after the change incomparable.** The rule identifier exists so that
 affected records can be selected and, if required, reclassified. Any such
 change requires a new identifier, a revision of this appendix, and an entry
 in the design change record.
+
+**The change of 17 November 2026** alters the rule's consequence, from a
+caveat to withholding the rod phase, and not `k` or the comparison. It is
+recorded in RAP-DCR-001 §4.37. `Report.result_class_rule` is not yet written,
+the classification rule being unimplemented, so it cannot select the records
+affected. `Report.fit_model` does: it is blank on every report written before
+the change and `P3` or `P5c` on every fitted report after it. The identifier
+for the rule as revised is to be assigned when `result_class_rule` is first
+written, and is to name this revision.
 
 ---
 
@@ -208,7 +239,19 @@ in the design change record.
 - DISC-IP-003, Section 6, detection thresholds.
 - Appendix A to DISC-IP-003, variable projection fitting of dark adaptation
   recovery curves.
-- `dark_criteria`, detection threshold simulation experiment. TODO: location
-  and commit.
+- `dark_criteria`, detection threshold simulation experiment,
+  https://github.com/emkayoh/dark_criteria, commit a611bf3.
 - RAP-DCR-001, design change record, for the removal of the earlier
-  rules-based classification this rule replaces.
+  rules-based classification this rule replaces, and §4.37 for the revision
+  of 17 November 2026.
+- RAP-MOD-001, §4 and §4.1, for the single exponential and the mapping of the
+  firmware's criterion.
+
+---
+
+## Revision
+
+| Date | Change |
+|---|---|
+| 11 October 2026 | First issue. |
+| 17 November 2026 | The rule's consequence changed from a caveat to reporting a single exponential with no rod values or rod intercept time, RAP-DCR-001 §4.37. The noise in the rule's formula named as the residual standard deviation with its denominator, having been called RMSE. The firmware's different denominator recorded. The comparison stated as made once, and `fit_model` stated as the selector of records before and after the change. `S2CI` renamed `S2HW95`, as the field now is. The `dark_criteria` reference completed from §1. |
